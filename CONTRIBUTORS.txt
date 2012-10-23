@@ -1,0 +1,26 @@
+OMEconomy VirWox(https://www.virwox.com/) OpenSim Region addone-module
+
+
+Michael Erwin Steuer - michael.steurer[at]iicm.tugraz.at
+Pixel Tomsen (chk) pixel.tomsen[at]gridnet.info
+Snoopy Pfeffer
+
+
+This software uses components from the following developers:
+* Sleepycat Software (Berkeley DB)
+* XmlRpcCS (http://xmlrpccs.sf.net/)
+* MySQL, Inc. (MySQL Connector/NET)
+* NUnit (http://www.nunit.org)
+* Prebuild (http://sourceforge.net/projects/dnpb/)
+* LibOpenMetaverse (http://lib.openmetaverse.org/)
+* C5 GENERIC COLLECTION LIBRARY FOR C#/CLI
+* Nini (http://nini.sourceforge.net/)
+* log4net (http://logging.apache.org/log4net/)
+* NDesk.Options 0.2.1 (http://www.ndesk.org/Options)
+* Json.NET 3.5 Release 6.  The binary used is actually Newtonsoft.Json.Net20.dll for Mono 2.4 compatability (http://james.newtonking.com/projects/json-net.aspx)
+
+
+In addition, we would like to thank:
+* The Mono Project
+* The NANT Developers
+* Microsoft (.NET, MSSQL-Adapters)
