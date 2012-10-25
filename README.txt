@@ -1,4 +1,4 @@
-; ***** OMEconomy for OpenSim (PayManager www.virwox.com) ****
+; ***** OMEconomy for OpenSim (Payment Provider www.virwox.com) ****
 ;
 ;Orginal Project Page : http://forge.opensimulator.org/gf/project/omeconomy
 ;Developer : Michael Erwin Steuer
