@@ -2,12 +2,12 @@
 ;
 ;Orginal Project Page : http://forge.opensimulator.org/gf/project/omeconomy
 ;Developer : Michael Erwin Steuer
-;Code-Version : 0.03.0003
 ;
-;Version : Prebuild, Simulator-Version 0.7.4
-;Start : 2011-10-26 - Pixel Tomsen (chk) (pixel.tomsen [at] gridnet.info)
+;Version : Prebuild, Simulator-Version 0.7.5
+;Git-Start: 2011-10-26 - Pixel Tomsen (https://github.com/PixelTomsen/omeconomy-module)
 ;
-;git-Source: https://github.com/PixelTomsen/omeconomy-module
+;new git public repo 2012-10-25
+;source: https://github.com/OpenMetaverseEconomy/OMEconomy-Modules
 ;
 
 ****************************************************************************

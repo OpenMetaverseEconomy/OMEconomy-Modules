@@ -2,8 +2,9 @@ OMEconomy VirWox(https://www.virwox.com/) OpenSim Region addone-module
 
 
 Michael Erwin Steuer - michael.steurer[at]iicm.tugraz.at
-Pixel Tomsen (chk) pixel.tomsen[at]gridnet.info
+Pixel Tomsen (Christian Kurzhals) pixel.tomsen[at]gridnet.info
 Snoopy Pfeffer
+Michelle Argus
 
 
 This software uses components from the following developers:

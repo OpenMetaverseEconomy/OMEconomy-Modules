@@ -436,12 +436,16 @@ namespace OMEconomy.OMBase
                         senderName = userManager.GetUserName(senderUUID);
 
 
-                        client.SendChatMessage(message, (byte)ChatTypeEnum.Say, Vector3.Zero, senderName, senderUUID, (byte)ChatSourceType.Agent, (byte)ChatAudibleLevel.Fully);
+                        client.SendChatMessage(
+                            message, (byte)ChatTypeEnum.Say, Vector3.Zero, senderName,
+                            senderUUID, senderUUID, (byte)ChatSourceType.Agent, (byte)ChatAudibleLevel.Fully);
 
                         sender = SceneHandler.Instance.LocateClientObject(senderUUID);
                         if (sender != null)
                         {
-                            sender.SendChatMessage(message, (byte)ChatTypeEnum.Say, Vector3.Zero, senderName, senderUUID, (byte)ChatSourceType.Agent, (byte)ChatAudibleLevel.Fully);
+                            sender.SendChatMessage(
+                                message, (byte)ChatTypeEnum.Say, Vector3.Zero, senderName,
+                                senderUUID, senderUUID, (byte)ChatSourceType.Agent, (byte)ChatAudibleLevel.Fully);
                         }
                         break;
 
