@@ -29,7 +29,7 @@ integer dialogChannel;   // dialog input channel.
 integer dialogHandle;// handle of dialog listener
 integer listenHandle;// handle of chat listener
 string  confirmString;   // server wants us to pass back this string on the next request
-listgetList; // list of object parameters to get
+list getList; // list of object parameters to get
 string  tportSim;// simulator to teleport to
 vector  tportPos;// teleport position
 
