@@ -47,8 +47,23 @@ namespace OMEconomy.OMBase
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private Dictionary<ulong, Scene> m_scene = new Dictionary<ulong, Scene>();
+
+        private static volatile SceneHandler instance = null;
+
+        public static SceneHandler Instance
+        {
+            get
+            {
+                lock (m_lock)
+                {
+                    instance = instance == null ? new SceneHandler() : instance;
+                    return instance;
+                }
+            }
+
+        }
+
         private static object m_lock = new object();
-		public Dictionary<UUID, string> m_regionSecrets = new Dictionary<UUID, string>();
 
         public List<UUID> GetUniqueRegions()
         {
@@ -66,25 +81,6 @@ namespace OMEconomy.OMBase
             return uniqueRegions;
         }
 
-		public string GetRegionIP(Scene scene) 
-		{
-			string regionIP = String.Empty;
-
-			regionIP = "http://" + scene.RegionInfo.ExternalEndPoint.Address.ToString() + ":" + scene.RegionInfo.HttpPort.ToString() + "/";
-
-			regionIP = regionIP.EndsWith("/") ? regionIP : (regionIP + "/");
-			regionIP = regionIP.StartsWith("http://") ? regionIP : ("http://" + regionIP);
-			return regionIP;
-		}
-
-		public void RemoveScene(Scene scene) 
-		{
-			if (m_scene.ContainsKey(scene.RegionInfo.RegionHandle)) 
-			{
-				m_scene.Remove(scene.RegionInfo.RegionHandle);
-			}
-		}
-
         public void AddScene(Scene scene)
         {
             if (m_scene.ContainsKey(scene.RegionInfo.RegionHandle))
@@ -96,6 +92,27 @@ namespace OMEconomy.OMBase
                 m_scene.Add(scene.RegionInfo.RegionHandle, scene);
             }
         }
+
+        /*
+                public List<UUID> GetOnlineAvatars()
+                {
+                    List<UUID> onlineAvatars = new List<UUID>();
+                    lock (m_scene)
+                    {
+                        foreach (Scene s in m_scene.Values)
+                        {
+                            s.ForEachScenePresence(delegate(ScenePresence sp)
+                            {
+                                if (!onlineAvatars.Contains(sp.UUID))
+                                {
+                                    onlineAvatars.Add(sp.UUID);
+                                }
+                            });
+                        }
+                    }
+                    return onlineAvatars;
+                }
+        */
 
         public Scene GetSceneByUUID(UUID regionID)
         {
@@ -204,7 +221,7 @@ namespace OMEconomy.OMBase
             return String.Empty;
         }
 
-        public string GetObjectLocation(SceneObjectPart part)
+        public String GetObjectLocation(SceneObjectPart part)
         {
             int x = Convert.ToInt32(part.AbsolutePosition.X);
             int y = Convert.ToInt32(part.AbsolutePosition.Y);
@@ -213,13 +230,5 @@ namespace OMEconomy.OMBase
             return "<" + x + "/" + y + "/" + z + ">";
         }
 
-		private SceneHandler() { }
-		private static volatile SceneHandler instance = null;
-		public static SceneHandler getInstance() {
-			lock (m_lock) {
-				instance = instance == null ? new SceneHandler () : instance;
-				return instance;
-			}
-		}
     }
 }
