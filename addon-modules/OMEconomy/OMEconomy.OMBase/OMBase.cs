@@ -134,8 +134,14 @@ namespace OMEconomy.OMBase
 
 		    scene.EventManager.OnMakeRootAgent -= OnMakeRootAgent;
 		    scene.EventManager.OnClientClosed -= OnClientClosed;
-			List<string> regions = m_sceneHandler.GetUniqueRegions().ConvertAll<string>(UUIDToString);
+
+			List<string> regions = new List<string>();
+			regions.Add (scene.RegionInfo.originRegionID.ToString ());
+
+     		//List<string> regions = m_sceneHandler.GetUniqueRegions().ConvertAll<string>(UUIDToString);
+			
 			Dictionary<string, string> d = new Dictionary<string, string>();
+
 			d.Add("method", "closeRegion");
 			d.Add("regions", JsonMapper.ToJson(regions));
 			m_communication.DoRequestDictionary(d);
