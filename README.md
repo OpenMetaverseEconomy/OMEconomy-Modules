@@ -40,6 +40,7 @@ This yields in two files _bin/OMEconomy.OMBase.dll_ and _bin/OMEconomy.OMCurrenc
 To enable the currency system you have to modify your OpenSim.ini configuration file and add the following lines:
 
     [OpenMetaverseEconomy]
+      enabled = true
       OMEconomyInitialize =    "https://www.virwox.com:419/OSMoneyGateway/init.php"
       GridShortName =          "GridShortName"
       OMBaseEnvironment =      "TEST"
