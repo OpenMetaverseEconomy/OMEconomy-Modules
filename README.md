@@ -85,6 +85,7 @@ and put it into a prim box. After the script started the object changes it's sha
 After successfully testing the Open Metaverse Currency with toy money you can easily switch to the productive system that supports real money. The dlls for test and productive system are the same but you have to modify the [OpenMetaverseEconomy] section in the file OpenSim.ini and restart your servers.
 
     [OpenMetaverseEconomy]
+      enabled = true
       OMEconomyInitialize =    "https://www.virwox.com:419/OSMoneyGateway/init.php"
       GridShortName =          "GridShortName"
       OMBaseEnvironment =      "LIVE"
