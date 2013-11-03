@@ -145,14 +145,10 @@ namespace OMEconomy.OMCurrency
 
 
 
-		//prior 0.7.6
-		//public void ApplyCharge(UUID agentID, int amount, string text) { }
+	//prior 0.7.6
+	//public void ApplyCharge(UUID agentID, int amount, string text) { }
 
-		//new since 0.7.6
-		public void ApplyCharge(UUID agentID, int amount, MoneyTransactionType type) { }
-		public void ApplyCharge(UUID agentID, int amount, MoneyTransactionType type, string extraData) { }
-
-
+	//new since 0.7.6
         public void ApplyCharge(UUID agentID, int amount, MoneyTransactionType type) { }
         public void ApplyCharge(UUID agentID, int amount, MoneyTransactionType type, string extraData) { }
 
@@ -364,15 +360,12 @@ namespace OMEconomy.OMCurrency
                 int returnfunds = GetBalance(agentID);
 
 
-				//new since 0.7.6
-				client.SendMoneyBalance(
-					TransactionID, true, new byte[0], returnfunds, 0, UUID.Zero, false, UUID.Zero, false, 0, String.Empty);
+		//new since 0.7.6
+		client.SendMoneyBalance(
+		TransactionID, true, new byte[0], returnfunds, 0, UUID.Zero, false, UUID.Zero, false, 0, String.Empty);
 
-				//prior 0.7.6
-				//client.SendMoneyBalance(TransactionID, true, new byte[0], returnfunds);
-
-                client.SendMoneyBalance(
-                    TransactionID, true, new byte[0], returnfunds, 0, UUID.Zero, false, UUID.Zero, false, 0, String.Empty);
+		//prior 0.7.6
+		//client.SendMoneyBalance(TransactionID, true, new byte[0], returnfunds);
 
             }
         }
