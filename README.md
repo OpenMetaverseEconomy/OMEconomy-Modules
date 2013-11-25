@@ -68,8 +68,7 @@ Next you have to register your grid with the gateway by executing "OMRegister" a
     [OMECONOMY]: | Please enter the avatarUUID of the grid's admin: 123
     [OMECONOMY]: +-
     [OMECONOMY]: | Please visit
-    [OMECONOMY]: |   http://129.27.200.58/OSMoneyGateway/4.0.3/Public/index.php
-                         /OMHelp/Basics/Script?name=GridShortName
+    [OMECONOMY]: |   https://virwox.com/OSMoneyGateway/4.0.3/Public/index.php/OMHelp/Basics/Script?name=GridShortName
     [OMECONOMY]: | to get the Terminal's script
     [OMECONOMY]: +-
     Region (region_name) #
