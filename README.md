@@ -74,7 +74,7 @@ Next you have to register your grid with the gateway by executing "OMRegister" a
     [OMECONOMY]: +-
     Region (region_name) #
 
-If all steps succeeded you can register your avatars using this [Script](./Script.lsl). Change the first line of the script to match your grid's identifier, _e.g._
+If all steps succeeded you can register your avatars using this [Script](./InworldScripts/OSgrid_TerminalScript.lsl). Change the first line of the script to match your grid's identifier, _e.g._
 
     string  GRIDNAME = "OSGrid";
 
