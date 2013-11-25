@@ -1,6 +1,6 @@
 ## Register Avatars with VirWoX
 
-Before you start with the registration please verify that your home-grid supports OMC. If you are the owner of a grid you can find instructions how to OMC-enable your regions [here](/Installation).
+Before you start with the registration please verify that your home-grid supports OMC. If you are the owner of a grid you can find instructions how to OMC-enable your regions [here](/README.md).
 
 To register, find one of the in-world registration terminals and click onto it (VirWoX provides a list of terminals for the [test](https://www.virwox.com:8000/terminals.php) system and the [productive](https://www.virwox.com/terminals.php) system).
 
