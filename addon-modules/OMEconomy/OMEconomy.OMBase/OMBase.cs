@@ -206,22 +206,22 @@ namespace OMEconomy.OMBase
             d.Add("moduleVersion", MODULE_VERSION);
             Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
 
-            if (response == null)
+			if (response != null)
             {
-                m_log.ErrorFormat("[{0}]: The Service is not Available", Name);
+				if (m_sceneHandler.m_regionSecrets.ContainsKey(regionUUID))
+				{
+					m_log.ErrorFormat("[{0}]: The secret for region {1}  is already set.", Name, regionUUID);
+				}
+				else
+				{
+					m_sceneHandler.m_regionSecrets.Add(regionUUID, (string)response["regionSecret"]);
+				}
+
+				m_log.InfoFormat("[{0}]: The Service is Available.", Name);
             }
             else
             {
-                if (m_sceneHandler.m_regionSecrets.ContainsKey(regionUUID))
-                {
-                    m_log.ErrorFormat("[{0}]: The secret for region {1}  is already set.", Name, regionUUID);
-                }
-                else
-                {
-					m_sceneHandler.m_regionSecrets.Add(regionUUID, (string)response["regionSecret"]);
-                }
-
-                m_log.InfoFormat("[{0}]: The Service is Available.", Name);
+				m_log.ErrorFormat("[{0}]: The Service is not Available", Name);
             }
         }
 
@@ -240,7 +240,7 @@ namespace OMEconomy.OMBase
             d.Add("gridDescription", "");
 
             Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-            if (response.ContainsKey("success") && response["success"] == "TRUE")
+			if (response != null && response.ContainsKey("success") && response["success"] == "TRUE")
             {
                 m_log.Info("[OMECONOMY]: +-");
                 m_log.Info("[OMECONOMY]: | Please visit");
@@ -259,17 +259,11 @@ namespace OMEconomy.OMBase
             Dictionary<string, string> d = new Dictionary<string, string>();
             d.Add("method", "checkStatus");
             bool status = false;
-            try
+
+			Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
+			if (response != null && response.ContainsKey("status") && response["status"] == "INSOMNIA")
             {
-                Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-                if (response.ContainsKey("status") && response["status"] == "INSOMNIA")
-                {
-                    status = true;
-                }
-            }
-            catch (Exception e)
-            {
-                m_log.ErrorFormat("[OMBase] - Exception: {0}", e.Message);
+               status = true;
             }
 
             m_log.Info("[OMECONOMY]: +---------------------------------------");
@@ -322,7 +316,7 @@ namespace OMEconomy.OMBase
                 }
                 else
                 {
-                    throw new Exception("Hash values do not match");
+					r.SetFault(1, "Could not validate the request");
                 }
             }
             catch (Exception e)

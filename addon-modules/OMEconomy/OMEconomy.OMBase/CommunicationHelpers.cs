@@ -74,7 +74,7 @@ namespace OMEconomy.OMBase
 				}
 
 				#if DEBUG
-				m_log.Debug(String.Format("[OMECONOMY] getGatewayURL({0}, {1}, {2}, {3})", m_initURL, moduleName, moduleVersion, m_gatewayEnvironment));
+					m_log.Debug(String.Format("[OMECONOMY] getGatewayURL({0}, {1}, {2}, {3})", m_initURL, moduleName, moduleVersion, m_gatewayEnvironment));
 				#endif
 
 				Dictionary<string, string> d = new Dictionary<string, string>();
@@ -84,12 +84,22 @@ namespace OMEconomy.OMBase
 
 				m_gatewayURL = m_initURL; //use to obtain the real gatewayURL;
 				Dictionary<string, string> response = DoRequestDictionary(d);
-				m_gatewayURL = (string)response["gatewayURL"];
+				if (response != null)
+				{
+					m_gatewayURL = (string)response["gatewayURL"];
 
-				if(m_gatewayURL != m_initURL && m_gatewayURL != null) {
-					m_log.Info("[" + moduleName + "]: GatewayURL: " + m_gatewayURL);
-				} else {
-					m_log.Error("[" + moduleName + "]: Could not set the GatewayURL - Please restart or contact the module vendor");
+					if(m_gatewayURL != m_initURL && m_gatewayURL != null) 
+					{
+						m_log.Info("[" + moduleName + "]: GatewayURL: " + m_gatewayURL);
+					} 
+					else 
+					{
+						m_log.Error("[" + moduleName + "]: Could not set the GatewayURL - Please restart or contact the module vendor");
+					}
+				} 
+				else 
+				{
+					m_log.Error("[" + moduleName + "]: Could not retrieve GatewayURL");
 				}
 
 			} catch(Exception e) {
@@ -169,15 +179,7 @@ namespace OMEconomy.OMBase
 		
 		public Dictionary<string, string> DoRequestDictionary(Dictionary<string, string> postParameters) {
 			string str = DoRequestPlain(postParameters);
-
-			Dictionary<string, string> returnValue = JsonMapper.ToObject<Dictionary<string, string>>(str);
-			return returnValue != null ? returnValue : new Dictionary<string, string>();
-		}
-
-		public Dictionary<string, object> DoRequestObject(Dictionary<string, string> postParameters) {
-			string str = DoRequestPlain(postParameters);
-			Dictionary<string, object> returnValue = JsonMapper.ToObject<Dictionary<string, object>>(str);
-			return returnValue;
+			return str != null ? JsonMapper.ToObject<Dictionary<string, string>> (str) : null;
 		}
 
 		private String DoRequestPlain(Dictionary<string, string> postParameters) 
@@ -224,8 +226,8 @@ namespace OMEconomy.OMBase
 #endif
 
 				return str;
-			} catch (Exception e) {
-				m_log.Error("[OMBASE]: Could not parse response " + e);
+			} catch (WebException e) {
+				m_log.Error("[OMBASE]: Could not access the Web service " + m_gatewayURL);
 				return null;
 			}
 		}
@@ -259,13 +261,15 @@ namespace OMEconomy.OMBase
 			d.Add("regionUUID", regionUUID.ToString());
 			d.Add("hashValue", HashParameters(requestDataHashing, nonce, regionUUID));
 			Dictionary<string, string> response = DoRequestDictionary(d);
-
-			string status = (string)response["status"];
-
-			if(status == "OK")
-				return requestData;
-			else 
-				return null;
+			if (response != null)
+			{
+				string status = (string)response["status"];
+				if (status == "OK") 
+				{
+					return requestData;
+				}
+			}
+			return null;
 		}
 
 		public void RegisterService(string moduleName, string moduleVersion, UUID regionUUID) 
