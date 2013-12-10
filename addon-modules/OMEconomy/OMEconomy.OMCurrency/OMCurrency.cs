@@ -613,7 +613,7 @@ namespace OMEconomy.OMCurrency
                 d.Add("method", "buyLand");
                 d.Add("id", (string)requestData["id"]);
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-				if (response) 
+				if (response != null) 
 				{
 	                UUID agentID = UUID.Parse((string)response["senderUUID"]);
 	                int parcelLocalID = int.Parse((string)response["parcelLocalID"]);
@@ -638,7 +638,7 @@ namespace OMEconomy.OMCurrency
 	                                                 parcelLocalID, parcelArea, parcelPrice, authenticated);
 
 	                IClientAPI sender = m_sceneHandler.LocateClientObject(agentID);
-	                if (sender)
+					if (sender != null)
 					{
 		                landbuyArguments.amountDebited = amountDebited;
 		                landbuyArguments.parcelOwnerID = parcelOwnerUUID;
@@ -673,7 +673,7 @@ namespace OMEconomy.OMCurrency
                 d.Add("id", (string)requestData["id"]);
 
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-				if (response && response["success"] == "TRUE" || response["success"] == "1")
+				if (response != null && response["success"] == "TRUE" || response["success"] == "1")
                 {
                     UInt32 localID = UInt32.Parse(response["localID"]);
                     UUID receiverUUID = UUID.Parse(response["receiverUUID"]);
@@ -731,7 +731,7 @@ namespace OMEconomy.OMCurrency
                 d.Add("id", (string)requestData["id"]);
 
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-				if (response) 
+				if (response != null) 
 				{
 	                UUID primUUID = UUID.Parse(response["primUUID"]);
 	                UUID senderUUID = UUID.Parse(response["senderUUID"]);
@@ -782,7 +782,7 @@ namespace OMEconomy.OMCurrency
 
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
 
-				if (response && response["success"] == "TRUE" || response["success"] == "1")
+				if (response != null && response["success"] == "TRUE" || response["success"] == "1")
                 {
                     returnresp.Add("success", true);
                 }
@@ -837,7 +837,7 @@ namespace OMEconomy.OMCurrency
                 d.Add("avatarUUID", (string)requestData["agentId"]);
 
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-				if (response) 
+				if (response != null) 
 				{
 					quoteResponse.Add ("success", false);
 					quoteResponse.Add ("errorMessage", response ["errorMessage"]);
@@ -903,7 +903,7 @@ namespace OMEconomy.OMCurrency
             Dictionary<string, string> d = new Dictionary<string, string>();
             d.Add("method", "getExchangeRate");
             Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-			if (response)
+			if (response != null)
 			{
 				return int.Parse((string)response["currentExchangeRate"]);
 			}
@@ -911,6 +911,7 @@ namespace OMEconomy.OMCurrency
 			{
 				m_log.Error("buyLand(XmlRpcRequest request, IPEndPoint ep)");
 			}
+			return 0;
         }
 
         #endregion XML NOTIFICATIONS
