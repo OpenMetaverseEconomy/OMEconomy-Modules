@@ -80,7 +80,7 @@ namespace OMEconomy.OMBase
 				Dictionary<string, string> d = new Dictionary<string, string>();
 				d.Add("moduleName", moduleName);
 				d.Add("moduleVersion", moduleVersion);
-				d.Add("gridShortName", m_gridShortName);
+				//d.Add("gridShortName", m_gridShortName);
 				d.Add("gatewayEnvironment", m_gatewayEnvironment);
 
 				m_gatewayURL = m_initURL; //use to obtain the real gatewayURL;
