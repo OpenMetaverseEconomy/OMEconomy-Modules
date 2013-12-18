@@ -230,13 +230,13 @@ namespace OMEconomy.OMBase
         {
             m_log.Info("[OMECONOMY]: +-");
             m_log.Info("[OMECONOMY]: | Your grid identifier is \"" + m_communication.getGridShortName() + "\"");
-            string shortName = MainConsole.Instance.CmdPrompt("           [OMECONOMY]: | Please enter the grid's nick name");
             string longName = MainConsole.Instance.CmdPrompt("           [OMECONOMY]: | Please enter the grid's full name");
+			string adminUUID = MainConsole.Instance.CmdPrompt("           [OMECONOMY]: | Please enter the admins Avatar UUID");
 
             Dictionary<string, string> d = new Dictionary<string, string>();
             d.Add("method", "registerScript");
-            d.Add("gridShortName", shortName);
-            d.Add("gridLongName", longName);
+			d.Add("gridLongName", longName);
+			d.Add("adminUUID", adminUUID);
             d.Add("gridDescription", "");
 
             Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
