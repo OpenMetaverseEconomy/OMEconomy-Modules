@@ -25,7 +25,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## Installation of the Modules
 
-Please get the OMEconomy zip archive with the latest source from here. You can either use the precompiled dlls from _Binaries/_ in this archive and put it into the bin/ directory of your OpenSimulator instance or compile the source on your own. If you decide to use the precompiled ones you can skip the next section.
+Please get the OMEconomy zip archive with the latest source from here.
+<!--
+You can either use the precompiled dlls from _Binaries/_ in this archive and put it into the bin/ directory of your OpenSimulator instance or compile the source on your own. If you decide to use the precompiled ones you can skip the next section.
+-->
 
 ### Compile the Sources
 
