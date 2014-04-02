@@ -101,4 +101,4 @@ to
 
 `string SERVER = "https://www.virwox.com:419/OS_atmint.php?grid="; // production system`
 
-in the registration-terminal-script. To actually use the OMC with real money in your grid we have to manually add it to the system. To do so please send an email to _michael.steurer@iicm.tugraz.at_ and provide the parameters gridID, gridName, gridNickname. Finally, your grid’s avatars have to register again with VirWoX’ productive system by clicking onto the registration terminal with the modified script.
+in the registration-terminal-script. To actually use the OMC with real money in your grid we have to manually add it to the system. To do so please send an email to _omc@iicm.edu_ and provide the parameters gridID, gridName, gridNickname. Finally, your grid’s avatars have to register again with VirWoX’ productive system by clicking onto the registration terminal with the modified script.
