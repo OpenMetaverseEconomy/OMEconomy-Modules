@@ -204,7 +204,7 @@ namespace OMEconomy.OMBase
 
 				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(m_gatewayURL);
 				request.Method = "POST";
-				request.Timeout = 20000;
+				request.Timeout = 100000;
 				request.ContentType="application/x-www-form-urlencoded";
 				request.ContentLength = data.Length;
 				Stream requestStream = request.GetRequestStream();
@@ -228,7 +228,7 @@ namespace OMEconomy.OMBase
 
 				return str;
 			} catch (WebException e) {
-				m_log.Error("[OMBASE]: Could not access the Web service " + m_gatewayURL);
+				m_log.Error("[OMBASE]: Could not access the Web service " + m_gatewayURL + "; " + e.Message);
 				return null;
 			}
 		}

@@ -463,7 +463,7 @@ namespace OMEconomy.OMCurrency
                 if (buyModule != null)
                 {
 					m_log.Debug ("Call BuyObject if sale price is 0");
-                    buyModule.BuyObject(remoteClient, categoryID, localID, saleType, salePrice);
+                    //buyModule.BuyObject(remoteClient, categoryID, localID, saleType, salePrice);
                 }
                 else
                 {
