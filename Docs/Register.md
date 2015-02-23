@@ -18,10 +18,7 @@ To link your avatar with your VirWoX account go back to the in-world registratio
 
 ### Get Toy Money
 
-Log into VirWoX’ test system and select "Deposit" from the side bar. Go to the section "paysafecard" and enter the amount of money to charge the account. Enter
-  0000 0000 0990 2423
-
-as PIN code in the new form, tick the Terms-Of-Service agreement, and click the "Pay" button. Go back to the account overview and exchange the money by selecting "EUR/OMC" from the "Exchange" section in the side bar. Enter the amount of money to be exchanged and click the "Next" button.
+Log into VirWoX’ test system and go to the "[Get Test Money](https://www.virwox.com:8000/make_test_funds.php)" site. Click on the "Send Money" button to deposit 100 EUR on your VirWoX test account. Go back to the account overview and exchange the money by selecting "EUR/OMC" from the "Exchange" section in the side bar. Enter the amount of money to be exchanged and click the "Next" button.
 
 ![Market Order](./images/OMCurrency-market_order.png)
 
