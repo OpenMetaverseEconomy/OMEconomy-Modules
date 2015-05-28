@@ -41,10 +41,11 @@ using OpenSim;
 using OpenSim.Framework;
 using OpenSim.Framework.Servers;
 using OpenSim.Region.Framework.Interfaces;
+using OpenSim.Services.Interfaces;
 using OpenSim.Region.Framework.Scenes;
 
 [assembly: Addin("OMBaseModule", "0.1")]
-[assembly: AddinDependency("OpenSim", "0.5")]
+[assembly: AddinDependency("OpenSim.Region.Framework", OpenSim.VersionInfo.VersionNumber)]
 
 namespace OMEconomy.OMBase
 {

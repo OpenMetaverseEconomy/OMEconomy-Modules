@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<Project frameworkVersion="v3_5" name="OMEconomy.OMCurrency" path="addon-modules/OMEconomy/OMEconomy.OMCurrency" type="Library">
+<Project frameworkVersion="v4_0" name="OMEconomy.OMCurrency" path="addon-modules/OMEconomy/OMEconomy.OMCurrency" type="Library">
   <Configuration name="Debug">
     <Options>
       <OutputPath>../../../bin/</OutputPath>

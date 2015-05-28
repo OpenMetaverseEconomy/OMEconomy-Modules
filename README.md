@@ -1,6 +1,6 @@
 *OMEconomy for OpenSim (Payment Provider www.virwox.com)*  
 Developer : Michael Erwin Steuer  
-Version : Prebuild, Simulator-Version 0.7.5  
+Version : Simulator-Version 0.7.5 - 0.7.6.3, 0.8.1  
 Git-Start: 2011-10-26 - Pixel Tomsen (https://github.com/PixelTomsen/omeconomy-module)  
 new git public repo 2012-10-25  
 source: https://github.com/OpenMetaverseEconomy/OMEconomy-Modules   

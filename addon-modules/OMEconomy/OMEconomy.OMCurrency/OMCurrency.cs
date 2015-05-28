@@ -51,7 +51,7 @@ using OpenSim.Region.Framework.Scenes;
 using OMEconomy.OMBase;
 
 [assembly: Addin("OMCurrencyModule", "0.1")]
-[assembly: AddinDependency("OpenSim", "0.5")]
+[assembly: AddinDependency("OpenSim.Region.Framework", OpenSim.VersionInfo.VersionNumber)]
 
 namespace OMEconomy.OMCurrency
 {
