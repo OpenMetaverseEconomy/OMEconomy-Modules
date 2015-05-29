@@ -60,6 +60,25 @@ namespace OMEconomy.OMBase
 		private String m_initURL = String.Empty;
 		private String m_gatewayEnvironment = String.Empty;
 
+		public static bool ValidateServerCertificate(
+			object sender,
+			X509Certificate certificate,
+			X509Chain chain,
+			SslPolicyErrors sslPolicyErrors)
+		{
+			if (sslPolicyErrors == SslPolicyErrors.None) {
+				return true;
+			}
+			if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateNameMismatch) {
+				m_log.Error("[OMBASE] WARNING Server provided a certificate that does not match its hostname");
+				return false;
+			}
+			m_log.Error("[OMBASE] Could not validate server certificate.");
+			m_log.Error("[OMBASE] If you are on Linux, try: mozroots --import --ask-remove");
+			m_log.Error("[OMBASE] with the user running OpenSim. (Or use --machine).");
+			return false;
+		}
+
 		public CommunicationHelpers(Nini.Config.IConfigSource config, String moduleName, String moduleVersion) {
 			try {
 				Nini.Config.IConfig startupConfig = config.Configs["OpenMetaverseEconomy"];
@@ -100,6 +119,7 @@ namespace OMEconomy.OMBase
 				} 
 				else 
 				{
+					m_gatewayURL = null;
 					m_log.Error("[" + moduleName + "]: Could not retrieve GatewayURL");
 				}
 
@@ -185,6 +205,11 @@ namespace OMEconomy.OMBase
 
 		private String DoRequestPlain(Dictionary<string, string> postParameters) 
 		{
+			if (m_gatewayURL == null) {
+				m_log.Error("[OMECONOMY] Could not access web service. GatewayURL not set.");
+				return null;
+			}
+
 			postParameters.Add("gridShortName", m_gridShortName);
 			postParameters.Add("gridURL", m_gridURL);
 
@@ -198,9 +223,7 @@ namespace OMEconomy.OMBase
 
 			try 
 			{
-#if INSOMNIA
-				ServicePointManager.ServerCertificateValidationCallback = delegate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) { return true; };
-#endif
+				ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
 
 				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(m_gatewayURL);
 				request.Method = "POST";
