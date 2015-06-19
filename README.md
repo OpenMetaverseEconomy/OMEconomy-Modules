@@ -1,42 +1,15 @@
 *OMEconomy for OpenSim (Payment Provider www.virwox.com)*  
-Developer : Michael Erwin Steuer  
 Version : Simulator-Version 0.7.5 - 0.7.6.3, 0.8.1  
-Git-Start: 2011-10-26 - Pixel Tomsen (https://github.com/PixelTomsen/omeconomy-module)  
-new git public repo 2012-10-25  
-source: https://github.com/OpenMetaverseEconomy/OMEconomy-Modules   
-
-****************************************************************************
-THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY EXPRESS OR
-IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
-IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*****************************************************************************
-
 
 ## Using the Open Metaverse Currency
   [Follow me](Docs/Register.md)
 
 ## Installation of the Modules
 
-Please get the OMEconomy zip archive with the latest source from here.
+Please get the OMEconomy zip archive for your OpenSimulator version from the folder _compiled/_. Extract the containing files to the root directory of OpenSimulator.
 <!--
 You can either use the precompiled dlls from _Binaries/_ in this archive and put it into the bin/ directory of your OpenSimulator instance or compile the source on your own. If you decide to use the precompiled ones you can skip the next section.
 -->
-
-### Compile the Sources
-
-Extract all files from the zip archive and put _OMEconomy/_ into _addon-modules/_ of your OpenSimulator root directory and recompile OpenSimulator (for Linux use `runprebuild.sh` and `nant`).
-<!--
-Change the configuration files _OMEconomy/prebuild.OMBase.xml_ and _OMEconomy/prebuild.OMCurrency.xml_ according to your OpenSimulator Version (either SEVEN\_THREE for OpenSimulator 0.7.3 or SEVEN\_FOUR for OpenSimulator 0.7.4)
--->
-This yields in two files _bin/OMEconomy.OMBase.dll_ and _bin/OMEconomy.OMCurrency.dll_ in root directory of your OpenSimulator instance.
 
 ### Installation
 
@@ -51,16 +24,32 @@ To enable the currency system you have to modify your OpenSim.ini configuration 
 
 The parameter "GridShortName" (_e.g._ OSGrid) is a unique identifier for your grid - please choose it carefully because it can not be changed any more.
 
+## Mono certificates
+
+To enable trusted https connections you must install CA certificates for mono. Please see the [Mono SecurityFAQ](http://www.mono-project.com/docs/faq/security/) for further information about why this is required.
+
+To install the certificates type
+
+   `mozroots --import --ask-remove`
+  
+  on your command line. This must be done as the user that will run OpenSimulator.exe. Alternatively you can install the certificates system wide:
+
+    sudo mozroots --machine --import -ask-remove
+
+## Start
+
 Restart your OpenSimulator and check for success in the logfile _OpenSim.log_. To verify that your region is OMC-enabled please check your logs (_OpenSim.log_) and search for the entries
 
-    [MODULES]: [OMBase]: Loading Shared Module.
-    [MODULES]: Found Module Library [/OpenSimulatorRoot/OMBase.dll]
-    [MODULES]: [OMBase]: Loading Shared Module.
+    13:01:50 - [PLUGINS]: Plugin Loaded: OMBaseModule
+    13:01:50 - [PLUGINS]: Plugin Loaded: OMCurrencyModule
+    13:01:50 - [REGIONMODULES]: From plugin OMBaseModule, (version 0.1), loaded 1 modules, 1 shared, 0 non-shared 0 unknown
+    13:01:50 - [REGIONMODULES]: From plugin OMCurrencyModule, (version 0.1), loaded 1 modules, 1 shared, 0 non-shared 0 unknown
     ...
-    [OMBASE]:   GatewayURL: http://virwox.com:419...
+    13:01:50 - [OMECONOMY]: getGatewayURL(https://www.virwox.com:419/OS
 
-If the currency service is NOT available or you can not find any *[OMBASE]* entries, or your simulator does not even start please read this tutorial again and follow the steps carefully.
-When receiving the Exception: "Invalid certificate received from server (mono issue for missing certificates)" you should follow the [Mono SecurityFAQ](http://www.mono-project.com/FAQ:_Security) and either execute `sudo mozroots --import --sync` or `mozroots --import --sync` on your command line.
+If the currency service is NOT available or you can not find any *[OMBASE]* or *[OMECONOMY]* entries, or your simulator does not even start please read this tutorial again and follow the steps carefully.
+   
+### Register
 
 Next you have to register your grid with the gateway by executing "OMRegister" at the simulator's command prompt. You are requested for your grids name and the admin avatar's UUID. If the registration process succeeds your are provided with a link to be put into a simple prim object.
 
@@ -102,3 +91,14 @@ to
 `string SERVER = "https://www.virwox.com:419/OS_atmint.php?grid="; // production system`
 
 in the registration-terminal-script. To actually use the OMC with real money in your grid we have to manually add it to the system. To do so please send an email to _omc@iicm.edu_ and provide the parameters gridID, gridName, gridNickname. Finally, your grid’s avatars have to register again with VirWoX’ productive system by clicking onto the registration terminal with the modified script.
+
+### Compile the Sources
+
+Clone the repository and copy the contents of  _addon-modules/OMEconomy/_ into _addon-modules/_ of your OpenSimulator root directory and recompile OpenSimulator (for Linux use `runprebuild.sh` and `nant`('xbuild')).
+<!--
+Change the configuration files _OMEconomy/prebuild.OMBase.xml_ and _OMEconomy/prebuild.OMCurrency.xml_ according to your OpenSimulator Version (either SEVEN\_THREE for OpenSimulator 0.7.3 or SEVEN\_FOUR for OpenSimulator 0.7.4)
+-->
+This yields in two files _bin/OMEconomy.OMBase.dll_ and _bin/OMEconomy.OMCurrency.dll_ in root directory of your OpenSimulator instance.
+
+For OpenSimulator 0.7.6.3 please use the code from branch [opensim-v0.7.6.3](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/opensim-v0.7.6.3).
+
