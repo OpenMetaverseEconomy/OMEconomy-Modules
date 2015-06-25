@@ -64,8 +64,6 @@ namespace OMEconomy.OMCurrency
 		private string MODULE_VERSION = "4.0.3";
 		private string MODULE_NAME = "OMCURRENCY";
 
-        private bool Enabled = false;
-
 		CommunicationHelpers m_communication = null;
 		public SceneHandler m_sceneHandler = SceneHandler.getInstance();
         //private string m_gridURL = String.Empty;
@@ -97,9 +95,6 @@ namespace OMEconomy.OMCurrency
 
         public void AddRegion(Scene scene)
         {
-            if (!Enabled)
-                return;
-
             scene.RegisterModuleInterface<IMoneyModule>(this);
         }
 
@@ -119,9 +114,6 @@ namespace OMEconomy.OMCurrency
 
         public void RemoveRegion(Scene scene)
         {
-            if (!Enabled)
-                return;
-
             scene.EventManager.OnNewClient -= OnNewClient;
             scene.EventManager.OnClientClosed -= OnClientClosed;
             scene.EventManager.OnValidateLandBuy -= OnValidateLandBuy;
