@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Threading;
 using System.Xml;
 using log4net;
 using Nini.Config;
@@ -361,7 +362,7 @@ namespace OMEconomy.OMCurrency
 
             }
         }
-
+		
         public void DoMoneyTransfer(UUID sourceId, UUID destId, int amount, int transactiontype)
         {
             DoMoneyTransfer(sourceId, destId, amount, transactiontype, null);
@@ -370,42 +371,44 @@ namespace OMEconomy.OMCurrency
         public void DoMoneyTransfer(UUID sourceId, UUID destId, int amount,
             int transactiontype, Dictionary<string, string> additionalParameters)
         {
-            IClientAPI recipient = m_sceneHandler.LocateClientObject(destId);
-            string recipientName = recipient == null ? destId.ToString() : recipient.FirstName + " " + recipient.LastName;
-
-            IClientAPI sender = m_sceneHandler.LocateClientObject(sourceId);
-            string senderName = sender == null ? sourceId.ToString() : sender.FirstName + " " + sender.LastName;
-
-            Dictionary<string, string> d = new Dictionary<string, string>();
-            d.Add("method", "transferMoney");
-            d.Add("senderUUID", sourceId.ToString());
-            d.Add("senderName", senderName);
-            d.Add("recipientUUID", destId.ToString());
-            d.Add("recipientName", recipientName);
-            d.Add("amount", amount.ToString());
-            d.Add("transactionType", transactiontype.ToString());
-            if (transactiontype == (int)TransactionType.OBJECT_PAYS)
-            {
-                d.Add("regionUUID", m_sceneHandler.LocateSceneClientIn(destId).RegionInfo.RegionID.ToString());
-            }
-            else
-            {
-                d.Add("regionUUID", m_sceneHandler.LocateSceneClientIn(sourceId).RegionInfo.RegionID.ToString());
-            }
-            //d.Add("m_gridURL", m_gridURL);
-
-            if (additionalParameters != null)
-            {
-                foreach (KeyValuePair<string, string> pair in additionalParameters)
-                {
-                    d.Add(pair.Key, pair.Value);
-                }
-            }
-
-            if (m_communication.DoRequestDictionary(d) == null)
-            {
-                serviceNotAvailable(sourceId);
-            }
+			System.Threading.ThreadPool.QueueUserWorkItem(delegate {
+	            IClientAPI recipient = m_sceneHandler.LocateClientObject(destId);
+	            string recipientName = recipient == null ? destId.ToString() : recipient.FirstName + " " + recipient.LastName;
+	
+	            IClientAPI sender = m_sceneHandler.LocateClientObject(sourceId);
+	            string senderName = sender == null ? sourceId.ToString() : sender.FirstName + " " + sender.LastName;
+	
+	            Dictionary<string, string> d = new Dictionary<string, string>();
+	            d.Add("method", "transferMoney");
+	            d.Add("senderUUID", sourceId.ToString());
+	            d.Add("senderName", senderName);
+	            d.Add("recipientUUID", destId.ToString());
+	            d.Add("recipientName", recipientName);
+	            d.Add("amount", amount.ToString());
+	            d.Add("transactionType", transactiontype.ToString());
+	            if (transactiontype == (int)TransactionType.OBJECT_PAYS)
+	            {
+	                d.Add("regionUUID", m_sceneHandler.LocateSceneClientIn(destId).RegionInfo.RegionID.ToString());
+	            }
+	            else
+	            {
+	                d.Add("regionUUID", m_sceneHandler.LocateSceneClientIn(sourceId).RegionInfo.RegionID.ToString());
+	            }
+	            //d.Add("m_gridURL", m_gridURL);
+	
+	            if (additionalParameters != null)
+	            {
+	                foreach (KeyValuePair<string, string> pair in additionalParameters)
+	                {
+	                    d.Add(pair.Key, pair.Value);
+	                }
+	            }
+	
+	            if (m_communication.DoRequestDictionary(d) == null)
+	            {
+	                serviceNotAvailable(sourceId);
+	            }
+			}, null);
         }
 
         #region Local Fund Management

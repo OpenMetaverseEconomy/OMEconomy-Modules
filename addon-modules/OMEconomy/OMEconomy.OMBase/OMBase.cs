@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
+using System.Threading;
 using log4net;
 using Nini.Config;
 using Nwc.XmlRpc;
@@ -135,18 +136,18 @@ namespace OMEconomy.OMBase
 
 		    scene.EventManager.OnMakeRootAgent -= OnMakeRootAgent;
 		    scene.EventManager.OnClientClosed -= OnClientClosed;
-
+						
 			List<string> regions = new List<string>();
 			regions.Add (scene.RegionInfo.originRegionID.ToString ());
 
      		//List<string> regions = m_sceneHandler.GetUniqueRegions().ConvertAll<string>(UUIDToString);
-			
-			Dictionary<string, string> d = new Dictionary<string, string>();
+			System.Threading.ThreadPool.QueueUserWorkItem(delegate {
+				Dictionary<string, string> d = new Dictionary<string, string>();
 
-			d.Add("method", "closeRegion");
-			d.Add("regions", JsonMapper.ToJson(regions));
-			m_communication.DoRequestDictionary(d);
-
+				d.Add("method", "closeRegion");
+				d.Add("regions", JsonMapper.ToJson(regions));
+				m_communication.DoRequestDictionary(d);
+			}, null);
         }
 
         public void Close()
@@ -180,50 +181,53 @@ namespace OMEconomy.OMBase
             Scene sc = m_sceneHandler.LocateSceneClientIn(clientID);
             if (sc == null)
                 return;
-
-            try
-            {
-                Dictionary<string, string> d = new Dictionary<string, string>();
-                d.Add("method", "leaveUser");
-                d.Add("avatarUUID", clientID.ToString());
-                d.Add("regionUUID", sc.RegionInfo.RegionID.ToString());
-                m_communication.DoRequestDictionary(d);
-            }
-            catch (Exception e)
-            {
-                m_log.DebugFormat("[OMBASE]: LeaveAvatar(): {0}", e.Message);
-            }
+			System.Threading.ThreadPool.QueueUserWorkItem(delegate {
+	            try
+	            {
+	                Dictionary<string, string> d = new Dictionary<string, string>();
+	                d.Add("method", "leaveUser");
+	                d.Add("avatarUUID", clientID.ToString());
+	                d.Add("regionUUID", sc.RegionInfo.RegionID.ToString());
+	                m_communication.DoRequestDictionary(d);
+	            }
+	            catch (Exception e)
+	            {
+	                m_log.DebugFormat("[OMBASE]: LeaveAvatar(): {0}", e.Message);
+	            }
+			}, null);
         }
         #endregion
 
         internal void InitializeRegion(string regionAdress, string regionName, UUID regionUUID)
         {
-            Dictionary<string, string> d = new Dictionary<string, string>();
-            d.Add("method", "initializeRegion");
-            d.Add("regionIP", regionAdress);
-            d.Add("regionName", regionName);
-            d.Add("regionUUID", regionUUID.ToString());
-            d.Add("simulatorVersion", VersionInfo.Version);
-            d.Add("moduleVersion", MODULE_VERSION);
-            Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-
-			if (response != null)
-            {
-				if (m_sceneHandler.m_regionSecrets.ContainsKey(regionUUID))
-				{
-					m_log.ErrorFormat("[{0}]: The secret for region {1}  is already set.", Name, regionUUID);
-				}
-				else
-				{
-					m_sceneHandler.m_regionSecrets.Add(regionUUID, (string)response["regionSecret"]);
-				}
-
-				m_log.InfoFormat("[{0}]: The Service is Available.", Name);
-            }
-            else
-            {
-				m_log.ErrorFormat("[{0}]: The Service is not Available", Name);
-            }
+			System.Threading.ThreadPool.QueueUserWorkItem(delegate {
+	            Dictionary<string, string> d = new Dictionary<string, string>();
+	            d.Add("method", "initializeRegion");
+	            d.Add("regionIP", regionAdress);
+	            d.Add("regionName", regionName);
+	            d.Add("regionUUID", regionUUID.ToString());
+	            d.Add("simulatorVersion", VersionInfo.Version);
+	            d.Add("moduleVersion", MODULE_VERSION);
+	            Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
+	
+				if (response != null)
+	            {
+					if (m_sceneHandler.m_regionSecrets.ContainsKey(regionUUID))
+					{
+						m_log.ErrorFormat("[{0}]: The secret for region {1}  is already set.", Name, regionUUID);
+					}
+					else
+					{
+						m_sceneHandler.m_regionSecrets.Add(regionUUID, (string)response["regionSecret"]);
+					}
+	
+					m_log.InfoFormat("[{0}]: The Service is Available.", Name);
+	            }
+	            else
+	            {
+					m_log.ErrorFormat("[{0}]: The Service is not Available", Name);
+	            }
+			}, null);
         }
 
 
