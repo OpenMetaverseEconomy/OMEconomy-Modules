@@ -197,11 +197,14 @@ namespace OMEconomy.OMBase
             }
             return value.Remove(value.Length - 1);
         }
-		
-		public Dictionary<string, string> DoRequestDictionary(Dictionary<string, string> postParameters) {
-			string str = DoRequestPlain(postParameters);
-			return str != null ? JsonMapper.ToObject<Dictionary<string, string>> (str) : null;
-		}
+
+        public Dictionary<string, string> DoRequestDictionary(Dictionary<string, string> postParameters) {
+            string str = DoRequestPlain(postParameters);
+            if(str != null && str.Length == 0) {
+                return new Dictionary<string, string>();
+            }
+            return str != null ? JsonMapper.ToObject<Dictionary<string, string>> (str) : null;
+        }
 
 		private String DoRequestPlain(Dictionary<string, string> postParameters) 
 		{
