@@ -55,7 +55,6 @@ namespace OMEconomy.OMBase
     {
 		private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-		private string MODULE_NAME = "OMBase";
 		public static string MODULE_VERSION = "4.0.3";
         
         private bool Enabled = false;
@@ -72,13 +71,13 @@ namespace OMEconomy.OMBase
 
         public string Name
         {
-            get { return MODULE_NAME; }
+            get { return "OMBASE"; }
         }
 
         public void Initialise(IConfigSource config)
         {
 
-			m_communication = new CommunicationHelpers(config, MODULE_NAME, MODULE_VERSION);
+			m_communication = new CommunicationHelpers(config, Name, MODULE_VERSION);
 
             IConfig cfg = config.Configs["OpenMetaverseEconomy"];
 
@@ -130,7 +129,7 @@ namespace OMEconomy.OMBase
 
         public void RemoveRegion(Scene scene)
 		{
-			m_log.Debug ("Close Region");
+			m_log.DebugFormat ("[{0}]: Close Region", Name);
 		    if (!Enabled)
 		        return;
 
@@ -192,7 +191,7 @@ namespace OMEconomy.OMBase
 	            }
 	            catch (Exception e)
 	            {
-	                m_log.DebugFormat("[OMBASE]: LeaveAvatar(): {0}", e.Message);
+					m_log.DebugFormat("[{0}]: LeaveAvatar(): {1}", Name, e.Message);
 	            }
 			}, null);
         }
@@ -255,7 +254,7 @@ namespace OMEconomy.OMBase
             }
             else
             {
-                m_log.Error("Could not active the grid. Please check the parameters and try again");
+				m_log.ErrorFormat("[{0}]: Could not active the grid. Please check the parameters and try again", Name);
             }
         }
 
@@ -354,7 +353,7 @@ namespace OMEconomy.OMBase
 #if DEBUG
                 foreach (KeyValuePair<string, string> pair in messageItems)
                 {
-                    m_log.Error(pair.Key + "  " + pair.Value);
+					m_log.ErrorFormat("[{0}]: {1} {2}", Name, pair.Key, pair.Value);
                 }
 #endif
 
@@ -477,7 +476,7 @@ namespace OMEconomy.OMBase
             Hashtable rparms = new Hashtable();
             try
             {
-                m_log.ErrorFormat("[{0}]: {1}", requestData["message"]);
+                m_log.ErrorFormat("[{0}]: {1}", Name, requestData["message"]);
                 rparms["success"] = true;
             }
             catch (Exception)

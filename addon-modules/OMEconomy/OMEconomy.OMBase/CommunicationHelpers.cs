@@ -59,6 +59,7 @@ namespace OMEconomy.OMBase
 		private String m_gatewayURL = String.Empty;
 		private String m_initURL = String.Empty;
 		private String m_gatewayEnvironment = String.Empty;
+		private String m_moduleName = "OMEconomy";
 
 		public static bool ValidateServerCertificate(
 			object sender,
@@ -69,13 +70,14 @@ namespace OMEconomy.OMBase
 			if (sslPolicyErrors == SslPolicyErrors.None) {
 				return true;
 			}
+			String moduleName = "OMEconomy";
 			if (sslPolicyErrors == SslPolicyErrors.RemoteCertificateNameMismatch) {
-				m_log.Error("[OMBASE] WARNING Server provided a certificate that does not match its hostname");
+				m_log.ErrorFormat("[{0}]: WARNING Server provided a certificate that does not match its hostname", moduleName);
 				return false;
 			}
-			m_log.Error("[OMBASE] Could not validate server certificate.");
-			m_log.Error("[OMBASE] If you are on Linux, try: mozroots --import --ask-remove");
-			m_log.Error("[OMBASE] with the user running OpenSim. (Or use --machine).");
+			m_log.ErrorFormat("[{0}]: Could not validate server certificate.", moduleName);
+			m_log.ErrorFormat("[{0}]: If you are on Linux, try: mozroots --import --ask-remove", moduleName);
+			m_log.ErrorFormat("[{0}]: with the user running OpenSim. (Or use --machine).", moduleName);
 			return false;
 		}
 
@@ -86,14 +88,15 @@ namespace OMEconomy.OMBase
 				m_initURL = startupConfig.GetString("OMEconomyInitialize", String.Empty);
 				m_gridShortName = startupConfig.GetString("GridShortName", String.Empty);
 				m_gridURL = config.Configs["GridService"].GetString("GridServerURI", String.Empty);
+				m_moduleName = moduleName;
 
 				if(m_gridShortName == String.Empty || m_initURL == String.Empty) {
-					m_log.Error("[" + moduleName + "]: GridShortName or OMEconomyInitialize not set");
+					m_log.ErrorFormat("[{0}]: GridShortName or OMEconomyInitialize not set", moduleName);
 					return;
 				}
 
 				#if DEBUG
-					m_log.Debug(String.Format("[OMECONOMY] getGatewayURL({0}, {1}, {2}, {3})", m_initURL, moduleName, moduleVersion, m_gatewayEnvironment));
+				m_log.Debug(String.Format("[{1}] getGatewayURL({0}, {1}, {2}, {3})", m_initURL, moduleName, moduleVersion, m_gatewayEnvironment));
 				#endif
 
 				Dictionary<string, string> d = new Dictionary<string, string>();
@@ -110,21 +113,21 @@ namespace OMEconomy.OMBase
 
 					if(m_gatewayURL != m_initURL && m_gatewayURL != null) 
 					{
-						m_log.Info("[" + moduleName + "]: GatewayURL: " + m_gatewayURL);
+						m_log.InfoFormat("[{0}]: GatewayURL: {1}", m_moduleName, m_gatewayURL);
 					} 
 					else 
 					{
-						m_log.Error("[" + moduleName + "]: Could not set the GatewayURL - Please restart or contact the module vendor");
+						m_log.ErrorFormat("[{0}]: Could not set the GatewayURL - Please restart or contact the module vendor", m_moduleName);
 					}
 				} 
 				else 
 				{
 					m_gatewayURL = null;
-					m_log.Error("[" + moduleName + "]: Could not retrieve GatewayURL");
+					m_log.ErrorFormat("[{0}]: Could not retrieve GatewayURL", m_moduleName);
 				}
 
 			} catch(Exception e) {
-				m_log.Error("[OMBASE]: " + e);
+				m_log.ErrorFormat("[{0}]: " + e, m_moduleName);
 			}
 
 		}
@@ -177,7 +180,7 @@ namespace OMEconomy.OMBase
 			}
 
 #if DEBUG
-			m_log.Debug(String.Format("[OMECONOMY] SHA1({0}) = {1}", message, hashHex));
+			m_log.Debug(String.Format("[{0}] SHA1({1}) = {2}", m_moduleName, message, hashHex));
 #endif
 
 			return hashHex;
@@ -209,7 +212,7 @@ namespace OMEconomy.OMBase
 		private String DoRequestPlain(Dictionary<string, string> postParameters) 
 		{
 			if (m_gatewayURL == null) {
-				m_log.Error("[OMECONOMY] Could not access web service. GatewayURL not set.");
+				m_log.ErrorFormat("[{0}]: Could not access web service. GatewayURL not set.", m_moduleName);
 				return null;
 			}
 
@@ -221,7 +224,7 @@ namespace OMEconomy.OMBase
 			byte[]  data = encoding.GetBytes(postData);
 
 #if DEBUG
-			m_log.Debug("[OMECONOMY] Request: " + m_gatewayURL + "?" + postData);
+			m_log.DebugFormat("[{0}] Request: {1}?{2}", m_moduleName, m_gatewayURL, postData);
 #endif
 
 			try 
@@ -249,12 +252,12 @@ namespace OMEconomy.OMBase
 				response.Close();
 
 #if DEBUG
-				m_log.Debug("[OMECONOMY] Response: " + string.Concat(str.Split()));
+				m_log.DebugFormat("[{0}] Response: {1}", m_moduleName, string.Concat(str.Split()));
 #endif
 
 				return str;
 			} catch (WebException e) {
-				m_log.Error("[OMBASE]: Could not access the Web service " + m_gatewayURL + "; " + e.Message);
+				m_log.ErrorFormat("[{0}]: Could not access the Web service {1};  {2}", m_moduleName, m_gatewayURL, e.Message);
 				return null;
 			}
 		}
@@ -264,14 +267,14 @@ namespace OMEconomy.OMBase
 			Hashtable communicationData = (Hashtable)request.Params[1];
 
 #if DEBUG
-			m_log.Debug("[OMBASE]: genericNotify(...)");
+			m_log.DebugFormat("[{0}]: genericNotify(...)", m_moduleName);
 			foreach (DictionaryEntry requestDatum in requestData) 
 			{
-				m_log.Debug("[OMBASE]:   " + requestDatum.Key.ToString()  + " " + (string)requestDatum.Value);
+				m_log.DebugFormat("[{0}]: {1} {2}", m_moduleName, requestDatum.Key.ToString(), (string)requestDatum.Value);
 			}
 			foreach (DictionaryEntry communicationDatum in communicationData) 
 			{
-				m_log.Debug("[OMBASE]:   " + communicationDatum.Key.ToString()  + " " + (string)communicationDatum.Value);
+				m_log.DebugFormat("[{0}]: {1} {2}", m_moduleName, communicationDatum.Key.ToString(), (string)communicationDatum.Value);
 			}
 #endif
 
