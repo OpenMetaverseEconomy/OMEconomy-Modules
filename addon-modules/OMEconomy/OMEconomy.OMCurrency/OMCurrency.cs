@@ -62,31 +62,32 @@ namespace OMEconomy.OMCurrency
     {
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-	private string MODULE_VERSION = "4.0.3";
+		private string MODULE_VERSION = "4.0.3";
+		private string MODULE_NAME = "OMCURRENCY";
 
-	CommunicationHelpers m_communication = null;
-	public SceneHandler m_sceneHandler = SceneHandler.getInstance();
+		CommunicationHelpers m_communication = null;
+		public SceneHandler m_sceneHandler = SceneHandler.getInstance();
         //private string m_gridURL = String.Empty;
         public Dictionary<UUID, int> m_KnownClientFunds = new Dictionary<UUID, int>();
         public OMBaseModule omBase = new OMBaseModule();
 
 
-	public event ObjectPaid OnObjectPaid;
+		public event ObjectPaid OnObjectPaid;
 
         #region ISharedRegion implementation
         public string Name { get { return "OMCURRENCY"; } }
 
-	public void Initialise(IConfigSource config)
+		public void Initialise(IConfigSource config)
         {
-		m_communication = new CommunicationHelpers(config, Name, OMBase.OMBaseModule.MODULE_VERSION);
+			m_communication = new CommunicationHelpers(config, MODULE_NAME, OMBase.OMBaseModule.MODULE_VERSION);
 
-		MainServer.Instance.AddXmlRPCHandler("OMCurrencyNotification", currencyNotify, false);
+			MainServer.Instance.AddXmlRPCHandler("OMCurrencyNotification", currencyNotify, false);
 
-		MainServer.Instance.AddXmlRPCHandler("getCurrencyQuote", getCurrencyQuote, false);
-		MainServer.Instance.AddXmlRPCHandler("buyCurrency", buyCurrency, false);
+			MainServer.Instance.AddXmlRPCHandler("getCurrencyQuote", getCurrencyQuote, false);
+			MainServer.Instance.AddXmlRPCHandler("buyCurrency", buyCurrency, false);
 
-		MainServer.Instance.AddXmlRPCHandler("preflightBuyLandPrep", preBuyLand);
-		MainServer.Instance.AddXmlRPCHandler("buyLandPrep", buyLand);
+			MainServer.Instance.AddXmlRPCHandler("preflightBuyLandPrep", preBuyLand);
+			MainServer.Instance.AddXmlRPCHandler("buyLandPrep", buyLand);
         }
 
         public void PostInitialise()
@@ -104,7 +105,7 @@ namespace OMEconomy.OMCurrency
             scene.EventManager.OnClientClosed += OnClientClosed;
             scene.EventManager.OnValidateLandBuy += OnValidateLandBuy;
             scene.EventManager.OnLandBuy += OnLandBuy;
-	    m_communication.RegisterService(Name, OMBase.OMBaseModule.MODULE_VERSION, scene.RegionInfo.RegionID);
+			m_communication.RegisterService(MODULE_NAME, OMBase.OMBaseModule.MODULE_VERSION, scene.RegionInfo.RegionID);
         }
 
         public Type ReplaceableInterface
@@ -441,7 +442,7 @@ namespace OMEconomy.OMCurrency
 
         public void ObjectBuy(IClientAPI remoteClient, UUID agentID, UUID sessionID, UUID groupID, UUID categoryID, uint localID, byte saleType, int salePrice)
         {
-			m_log.DebugFormat("[{0}]: User {1} buys object {2} for {3} OMC", Name, agentID, localID, salePrice);
+			m_log.DebugFormat("User {0} buys object {1} for {2} OMC", agentID, localID, salePrice);
             Scene s = m_sceneHandler.LocateSceneClientIn(remoteClient.AgentId);
             SceneObjectPart part = s.GetSceneObjectPart(localID);
             if (part == null)
@@ -452,10 +453,11 @@ namespace OMEconomy.OMCurrency
 
             if (salePrice == 0)
             {
+				m_log.Debug ("Sale Price is 0");
                 IBuySellModule buyModule = s.RequestModuleInterface<IBuySellModule>();
                 if (buyModule != null)
                 {
-					//m_log.Debug ("Call BuyObject if sale price is 0");
+					m_log.Debug ("Call BuyObject if sale price is 0");
                     //buyModule.BuyObject(remoteClient, categoryID, localID, saleType, salePrice);
                 }
                 else
@@ -689,11 +691,12 @@ namespace OMEconomy.OMCurrency
                     IBuySellModule buyModule = s.RequestModuleInterface<IBuySellModule>();
                     if (buyModule != null)
 					{
+						m_log.Debug("Call BuyObject from delicerObject");
                         buyModule.BuyObject(sender, categoryID, localID, saleType, salePrice);
                     }
                     else
                     {
-						throw new Exception("Could not find IBuySellModule");
+                        throw new Exception("Could not find IBuySellModule");
                     }
                     rparms["success"] = true;
                 }
@@ -739,12 +742,12 @@ namespace OMEconomy.OMCurrency
 					ObjectPaid HandlerOnObjectPaid = OnObjectPaid;
 					if (HandlerOnObjectPaid != null) 
 					{
-						m_log.DebugFormat("[{0}]: Trigger Object Payed", Name);
+						m_log.Debug("Trigger Object Payed");
 		                HandlerOnObjectPaid(primUUID, senderUUID, amount);
 					}
 					else
 					{
-						m_log.DebugFormat("[{0}]: No Trigger Object Payed", Name);
+						m_log.Debug("No Trigger Object Payed");
 					}
 
 					rparms["success"] = true;
@@ -752,7 +755,7 @@ namespace OMEconomy.OMCurrency
             }
             catch (Exception e)
             {
-				m_log.ErrorFormat("[{0}]: onObjectPaid() {1}", Name, e.Message);
+				m_log.Error("[OMCURRENCY]: onObjectPaid() " + e.Message);
             }
             return rparms;
         }
@@ -848,7 +851,7 @@ namespace OMEconomy.OMCurrency
 
         public XmlRpcResponse preBuyLand(XmlRpcRequest request, IPEndPoint ep)
         {
-			m_log.ErrorFormat("[{0}]: preBuyLand(XmlRpcRequest request, IPEndPoint ep)", Name);
+            m_log.Error("preBuyLand(XmlRpcRequest request, IPEndPoint ep)");
             XmlRpcResponse ret = new XmlRpcResponse();
             Hashtable retparam = new Hashtable();
             Hashtable membershiplevels = new Hashtable();
@@ -882,7 +885,7 @@ namespace OMEconomy.OMCurrency
 
         public XmlRpcResponse buyLand(XmlRpcRequest request, IPEndPoint ep)
         {
-			m_log.ErrorFormat("[{0}]: buyLand(XmlRpcRequest request, IPEndPoint ep)", Name);
+            m_log.Error("buyLand(XmlRpcRequest request, IPEndPoint ep)");
             XmlRpcResponse ret = new XmlRpcResponse();
             Hashtable retparam = new Hashtable();
             retparam.Add("success", true);
@@ -901,7 +904,7 @@ namespace OMEconomy.OMCurrency
 			}
 			else
 			{
-				m_log.ErrorFormat("[{0}]: buyLand(XmlRpcRequest request, IPEndPoint ep)", Name);
+				m_log.Error("buyLand(XmlRpcRequest request, IPEndPoint ep)");
 			}
 			return 0;
         }

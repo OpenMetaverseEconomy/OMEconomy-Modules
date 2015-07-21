@@ -55,6 +55,7 @@ namespace OMEconomy.OMBase
     {
 		private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+		private string MODULE_NAME = "OMBase";
 		public static string MODULE_VERSION = "4.0.3";
         
         private bool Enabled = false;
@@ -71,13 +72,13 @@ namespace OMEconomy.OMBase
 
         public string Name
         {
-            get { return "OMBASE"; }
+            get { return MODULE_NAME; }
         }
 
         public void Initialise(IConfigSource config)
         {
 
-			m_communication = new CommunicationHelpers(config, Name, MODULE_VERSION);
+			m_communication = new CommunicationHelpers(config, MODULE_NAME, MODULE_VERSION);
 
             IConfig cfg = config.Configs["OpenMetaverseEconomy"];
 
@@ -129,7 +130,7 @@ namespace OMEconomy.OMBase
 
         public void RemoveRegion(Scene scene)
 		{
-			m_log.DebugFormat ("[{0}]: Close Region", Name);
+			m_log.Debug ("Close Region");
 		    if (!Enabled)
 		        return;
 
@@ -191,7 +192,7 @@ namespace OMEconomy.OMBase
 	            }
 	            catch (Exception e)
 	            {
-					m_log.DebugFormat("[{0}]: LeaveAvatar(): {1}", Name, e.Message);
+	                m_log.DebugFormat("[OMBASE]: LeaveAvatar(): {0}", e.Message);
 	            }
 			}, null);
         }
@@ -211,15 +212,11 @@ namespace OMEconomy.OMBase
 	
 				if (response != null)
 	            {
-					if (m_sceneHandler.m_regionSecrets.ContainsKey(regionUUID))
+					bool secret_updated = m_sceneHandler.SetRegionSecret(regionUUID, (string)response["regionSecret"]);
+					if (secret_updated)
 					{
-						m_log.ErrorFormat("[{0}]: The secret for region {1}  is already set.", Name, regionUUID);
+						m_log.InfoFormat("[{0}]: Updated secret for region {1}.", Name, regionUUID);
 					}
-					else
-					{
-						m_sceneHandler.m_regionSecrets.Add(regionUUID, (string)response["regionSecret"]);
-					}
-	
 					m_log.InfoFormat("[{0}]: The Service is Available.", Name);
 	            }
 	            else
@@ -254,7 +251,7 @@ namespace OMEconomy.OMBase
             }
             else
             {
-				m_log.ErrorFormat("[{0}]: Could not active the grid. Please check the parameters and try again", Name);
+                m_log.Error("Could not active the grid. Please check the parameters and try again");
             }
         }
 
@@ -274,11 +271,6 @@ namespace OMEconomy.OMBase
             m_log.Info("[OMECONOMY]: | gridID: " + m_communication.getGridShortName());
             m_log.Info("[OMECONOMY]: | connectionStatus: " + status);
             m_log.Info("[OMECONOMY]: +---------------------------------------");
-        }
-
-        public string GetRegionSecret(UUID regionUUID)
-        {
-            return m_sceneHandler.m_regionSecrets.ContainsKey(regionUUID) ? m_sceneHandler.m_regionSecrets[regionUUID] : String.Empty;
         }
 
         private void asynchronousClaimUser(Dictionary<string, string> data)
@@ -353,7 +345,7 @@ namespace OMEconomy.OMBase
 #if DEBUG
                 foreach (KeyValuePair<string, string> pair in messageItems)
                 {
-					m_log.ErrorFormat("[{0}]: {1} {2}", Name, pair.Key, pair.Value);
+                    m_log.Error(pair.Key + "  " + pair.Value);
                 }
 #endif
 
@@ -476,7 +468,7 @@ namespace OMEconomy.OMBase
             Hashtable rparms = new Hashtable();
             try
             {
-                m_log.ErrorFormat("[{0}]: {1}", Name, requestData["message"]);
+                m_log.ErrorFormat("[{0}]: {1}", requestData["message"]);
                 rparms["success"] = true;
             }
             catch (Exception)

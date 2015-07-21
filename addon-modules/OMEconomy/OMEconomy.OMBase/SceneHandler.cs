@@ -48,7 +48,23 @@ namespace OMEconomy.OMBase
 
         private Dictionary<ulong, Scene> m_scene = new Dictionary<ulong, Scene>();
         private static object m_lock = new object();
-		public Dictionary<UUID, string> m_regionSecrets = new Dictionary<UUID, string>();
+
+		private Dictionary<UUID, string> m_regionSecrets = new Dictionary<UUID, string> ();
+
+		public string GetRegionSecret(UUID regionUUID)
+		{
+			return m_regionSecrets [regionUUID];
+		}
+
+		public bool SetRegionSecret(UUID regionUUID, string secret)
+		{
+			bool updated_secret = false;
+			if (m_regionSecrets.ContainsKey (regionUUID)) {
+				updated_secret = true;
+			}
+			m_regionSecrets [regionUUID] = secret;
+			return updated_secret;
+		}
 
         public List<UUID> GetUniqueRegions()
         {
