@@ -51,7 +51,7 @@ using OpenSim.Region.Framework.Interfaces;
 using OpenSim.Region.Framework.Scenes;
 using OMEconomy.OMBase;
 
-[assembly: Addin("OMCurrencyModule", "0.1")]
+[assembly: Addin("OMCurrencyModule", OMEconomy.OMBase.OMBaseModule.MODULE_VERSION)]
 [assembly: AddinDependency("OpenSim.Region.Framework", OpenSim.VersionInfo.VersionNumber)]
 
 namespace OMEconomy.OMCurrency
@@ -62,12 +62,13 @@ namespace OMEconomy.OMCurrency
     {
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-		private string MODULE_VERSION = "4.0.3";
+		private string MODULE_VERSION = OMBase.OMBaseModule.MODULE_VERSION;
 		private string MODULE_NAME = "OMCURRENCY";
+
+        Boolean Enabled = false;
 
 		CommunicationHelpers m_communication = null;
 		public SceneHandler m_sceneHandler = SceneHandler.getInstance();
-        //private string m_gridURL = String.Empty;
         public Dictionary<UUID, int> m_KnownClientFunds = new Dictionary<UUID, int>();
         public OMBaseModule omBase = new OMBaseModule();
 
@@ -79,8 +80,15 @@ namespace OMEconomy.OMCurrency
 
 		public void Initialise(IConfigSource config)
         {
-			m_communication = new CommunicationHelpers(config, MODULE_NAME, OMBase.OMBaseModule.MODULE_VERSION);
+            IConfig cfg = config.Configs["OpenMetaverseEconomy"];
+            if (null == cfg)
+            	return;
 
+            Enabled = cfg.GetBoolean("enabled", false);
+
+            if (!Enabled)
+                return;
+			m_communication = new CommunicationHelpers(config, MODULE_NAME, OMBase.OMBaseModule.MODULE_VERSION);
 			MainServer.Instance.AddXmlRPCHandler("OMCurrencyNotification", currencyNotify, false);
 
 			MainServer.Instance.AddXmlRPCHandler("getCurrencyQuote", getCurrencyQuote, false);
@@ -96,11 +104,17 @@ namespace OMEconomy.OMCurrency
 
         public void AddRegion(Scene scene)
         {
+            if (!Enabled)
+                return;
+
             scene.RegisterModuleInterface<IMoneyModule>(this);
         }
 
         public void RegionLoaded(Scene scene)
         {
+            if (!Enabled)
+                return;
+
             scene.EventManager.OnNewClient += OnNewClient;
             scene.EventManager.OnClientClosed += OnClientClosed;
             scene.EventManager.OnValidateLandBuy += OnValidateLandBuy;
@@ -115,6 +129,8 @@ namespace OMEconomy.OMCurrency
 
         public void RemoveRegion(Scene scene)
         {
+			if (!Enabled)
+				return;
             scene.EventManager.OnNewClient -= OnNewClient;
             scene.EventManager.OnClientClosed -= OnClientClosed;
             scene.EventManager.OnValidateLandBuy -= OnValidateLandBuy;
@@ -458,7 +474,7 @@ namespace OMEconomy.OMCurrency
                 if (buyModule != null)
                 {
 					m_log.Debug ("Call BuyObject if sale price is 0");
-                    //buyModule.BuyObject(remoteClient, categoryID, localID, saleType, salePrice);
+                    buyModule.BuyObject(remoteClient, categoryID, localID, saleType, salePrice);
                 }
                 else
                 {

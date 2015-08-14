@@ -45,7 +45,7 @@ using OpenSim.Region.Framework.Interfaces;
 using OpenSim.Services.Interfaces;
 using OpenSim.Region.Framework.Scenes;
 
-[assembly: Addin("OMBaseModule", "0.1")]
+[assembly: Addin("OMBaseModule", OMEconomy.OMBase.OMBaseModule.MODULE_VERSION)]
 [assembly: AddinDependency("OpenSim.Region.Framework", OpenSim.VersionInfo.VersionNumber)]
 
 namespace OMEconomy.OMBase
@@ -56,8 +56,8 @@ namespace OMEconomy.OMBase
 		private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 		private string MODULE_NAME = "OMBase";
-		public static string MODULE_VERSION = "4.0.3";
-        
+		public const string MODULE_VERSION = "4.0.4";
+
         private bool Enabled = false;
 
 		private SceneHandler m_sceneHandler = SceneHandler.getInstance();
