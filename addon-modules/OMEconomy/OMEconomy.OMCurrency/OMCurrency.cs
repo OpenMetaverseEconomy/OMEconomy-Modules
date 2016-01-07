@@ -151,6 +151,9 @@ namespace OMEconomy.OMCurrency
         public void ApplyUploadCharge(UUID agentID, int second, string third) { }
         public void ApplyGroupCreationCharge(UUID agentID) { }
 
+        public void MoveMoney(UUID fromAgentID, UUID toAgentID, int amount, string text)
+        {
+        }
 
 
 	//prior 0.7.6
@@ -167,7 +170,7 @@ namespace OMEconomy.OMCurrency
 
         #endregion
 
-        public bool ObjectGiveMoney(UUID objectID, UUID fromID, UUID toID, int amount)
+        public bool ObjectGiveMoney(UUID objectID, UUID fromID, UUID toID, int amount, UUID txn, out string reason)
         {
             try
             {
@@ -186,12 +189,14 @@ namespace OMEconomy.OMCurrency
                 additionalParameters.Add("parentUUID", part.OwnerID.ToString());
 
                 DoMoneyTransfer(fromID, toID, amount, (int)TransactionType.OBJECT_PAYS, additionalParameters);
+                reason = String.Empty;
                 return true;
             }
             catch (Exception e)
             {
                 m_log.ErrorFormat("[{0}]: ObjectGiveMoney Exception: {1} - {2}", Name, e.Message, e.StackTrace);
-                return true;
+                reason = e.Message;
+                return false;
             }
         }
 
