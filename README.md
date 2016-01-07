@@ -1,5 +1,5 @@
 *OMEconomy for OpenSim (Payment Provider www.virwox.com)*  
-Version : Simulator-Version 0.7.5 - 0.7.6.3, 0.8.1  
+Version : Simulator-Version 0.7.5 - 0.7.6.3, 0.8.1, 0.8.2  
 
 ## Using the Open Metaverse Currency
   [Follow me](Docs/Register.md)
@@ -90,7 +90,11 @@ to
 
 `string SERVER = "https://www.virwox.com:419/OS_atmint.php?grid="; // production system`
 
-in the registration-terminal-script. To actually use the OMC with real money in your grid we have to manually add it to the system. To do so please send an email to _omc@iicm.edu_ and provide the parameters gridID, gridName, gridNickname. Finally, your grid’s avatars have to register again with VirWoX’ productive system by clicking onto the registration terminal with the modified script.
+in the registration-terminal-script. 
+
+After that you have to register with the productive environment by executing "OMRegister" again.
+
+To actually use the OMC with real money in your grid we have to manually add it to the system. To do so please send an email to _omc@iicm.edu_ and provide your GridShortName. Finally, your grid’s avatars have to register again with VirWoX’ productive system by clicking onto the registration terminal with the modified script.
 
 ### Compile the Sources
 
@@ -100,5 +104,7 @@ Change the configuration files _OMEconomy/prebuild.OMBase.xml_ and _OMEconomy/pr
 -->
 This yields in two files _bin/OMEconomy.OMBase.dll_ and _bin/OMEconomy.OMCurrency.dll_ in root directory of your OpenSimulator instance.
 
+
 For OpenSimulator 0.7.6.3 please use the code from branch [opensim-v0.7.6.3](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/opensim-v0.7.6.3).
+For OpenSimulator 0.8.1 please use the code from branch [opensim-v0.8.1](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/opensim-v0.8.1).
 
