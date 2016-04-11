@@ -135,7 +135,7 @@ namespace OMEconomy.OMBase
                 foreach (Scene _scene in m_scene.Values)
                 {
                     ScenePresence tPresence = _scene.GetScenePresence(agentID);
-                    if (tPresence != null && !tPresence.IsChildAgent && tPresence.ControllingClient != null)
+                    if (tPresence != null && !tPresence.IsChildAgent && tPresence.ControllingClient != null && tPresence.PresenceType == PresenceType.User)
                     {
                         return tPresence.ControllingClient;
                     }
@@ -167,7 +167,7 @@ namespace OMEconomy.OMBase
                 foreach (Scene _scene in m_scene.Values)
                 {
                     ScenePresence tPresence = _scene.GetScenePresence(agentID);
-                    if (tPresence != null && !tPresence.IsChildAgent)
+                    if (tPresence != null && !tPresence.IsChildAgent && tPresence.PresenceType == PresenceType.User)
                     {
                         return _scene;
                     }
