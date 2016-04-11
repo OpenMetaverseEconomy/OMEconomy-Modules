@@ -159,6 +159,8 @@ namespace OMEconomy.OMBase
         #region // Events
         private void OnMakeRootAgent(ScenePresence sp)
         {
+            if (sp.PresenceType == PresenceType.Npc) return;
+
             IClientAPI client = m_sceneHandler.LocateClientObject(sp.UUID);
             Scene currentScene = m_sceneHandler.LocateSceneClientIn(sp.UUID);
 
