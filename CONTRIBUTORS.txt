@@ -6,6 +6,7 @@ Pixel Tomsen (Christian Kurzhals) pixel.tomsen[at]gridnet.info
 Snoopy Pfeffer
 Michelle Argus
 Virtouse Lilienthal ( https://virtec.io )
+Lotek Ixtar
 
 
 This software uses components from the following developers:
