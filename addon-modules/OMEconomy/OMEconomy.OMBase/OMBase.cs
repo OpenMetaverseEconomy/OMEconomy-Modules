@@ -82,10 +82,10 @@ namespace OMEconomy.OMBase
 
             IConfig cfg = config.Configs["OpenMetaverseEconomy"];
 
-            if (null == cfg)
+            if (cfg == null)
                 return;
 
-            Enabled = cfg.GetBoolean("enabled", false);
+            Enabled = cfg.GetBoolean("enabled", Enabled);
 
             if (!Enabled)
                 return;

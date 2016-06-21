@@ -56,6 +56,7 @@ namespace OMEconomy.OMBase
 
 		private SceneHandler m_sceneHandler = SceneHandler.getInstance();
 
+		private bool   m_enabled = false;
 		private String m_gatewayURL = String.Empty;
 		private String m_initURL = String.Empty;
 		private String m_gatewayEnvironment = String.Empty;
@@ -82,6 +83,11 @@ namespace OMEconomy.OMBase
 		public CommunicationHelpers(Nini.Config.IConfigSource config, String moduleName, String moduleVersion) {
 			try {
 				Nini.Config.IConfig startupConfig = config.Configs["OpenMetaverseEconomy"];
+				if (startupConfig == null)
+					return;
+				m_enabled = startupConfig.GetBoolean("enabled", m_enabled);
+				if(!m_enabled)
+					return;
 				m_gatewayEnvironment = startupConfig.GetString("OMBaseEnvironment", "TEST");
 				m_initURL = startupConfig.GetString("OMEconomyInitialize", String.Empty);
 				m_gridShortName = startupConfig.GetString("GridShortName", String.Empty);
