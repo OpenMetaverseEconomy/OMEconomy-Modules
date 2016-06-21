@@ -61,40 +61,40 @@ namespace OMEconomy.OMCurrency
     {
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-		private string MODULE_VERSION = OMBase.OMBaseModule.MODULE_VERSION;
-		private string MODULE_NAME = "OMCURRENCY";
+        private string MODULE_VERSION = OMBase.OMBaseModule.MODULE_VERSION;
+        private string MODULE_NAME = "OMCURRENCY";
 
         Boolean Enabled = false;
 
-		CommunicationHelpers m_communication = null;
-		public SceneHandler m_sceneHandler = SceneHandler.getInstance();
+        CommunicationHelpers m_communication = null;
+        public SceneHandler m_sceneHandler = SceneHandler.getInstance();
         public Dictionary<UUID, int> m_KnownClientFunds = new Dictionary<UUID, int>();
         public OMBaseModule omBase = new OMBaseModule();
 
 
-		public event ObjectPaid OnObjectPaid;
+        public event ObjectPaid OnObjectPaid;
 
         #region ISharedRegion implementation
         public string Name { get { return "OMCURRENCY"; } }
 
-		public void Initialise(IConfigSource config)
+        public void Initialise(IConfigSource config)
         {
             IConfig cfg = config.Configs["OpenMetaverseEconomy"];
             if (cfg == null)
-            	return;
+                return;
 
             Enabled = cfg.GetBoolean("enabled", Enabled);
 
             if (!Enabled)
                 return;
-			m_communication = new CommunicationHelpers(config, MODULE_NAME, OMBase.OMBaseModule.MODULE_VERSION);
-			MainServer.Instance.AddXmlRPCHandler("OMCurrencyNotification", currencyNotify, false);
+            m_communication = new CommunicationHelpers(config, MODULE_NAME, OMBase.OMBaseModule.MODULE_VERSION);
+            MainServer.Instance.AddXmlRPCHandler("OMCurrencyNotification", currencyNotify, false);
 
-			MainServer.Instance.AddXmlRPCHandler("getCurrencyQuote", getCurrencyQuote, false);
-			MainServer.Instance.AddXmlRPCHandler("buyCurrency", buyCurrency, false);
+            MainServer.Instance.AddXmlRPCHandler("getCurrencyQuote", getCurrencyQuote, false);
+            MainServer.Instance.AddXmlRPCHandler("buyCurrency", buyCurrency, false);
 
-			MainServer.Instance.AddXmlRPCHandler("preflightBuyLandPrep", preBuyLand);
-			MainServer.Instance.AddXmlRPCHandler("buyLandPrep", buyLand);
+            MainServer.Instance.AddXmlRPCHandler("preflightBuyLandPrep", preBuyLand);
+            MainServer.Instance.AddXmlRPCHandler("buyLandPrep", buyLand);
         }
 
         public void PostInitialise()
@@ -118,7 +118,7 @@ namespace OMEconomy.OMCurrency
             scene.EventManager.OnClientClosed += OnClientClosed;
             scene.EventManager.OnValidateLandBuy += OnValidateLandBuy;
             scene.EventManager.OnLandBuy += OnLandBuy;
-			m_communication.RegisterService(MODULE_NAME, OMBase.OMBaseModule.MODULE_VERSION, scene.RegionInfo.RegionID);
+            m_communication.RegisterService(MODULE_NAME, OMBase.OMBaseModule.MODULE_VERSION, scene.RegionInfo.RegionID);
         }
 
         public Type ReplaceableInterface
@@ -128,8 +128,8 @@ namespace OMEconomy.OMCurrency
 
         public void RemoveRegion(Scene scene)
         {
-			if (!Enabled)
-				return;
+            if (!Enabled)
+                return;
             scene.EventManager.OnNewClient -= OnNewClient;
             scene.EventManager.OnClientClosed -= OnClientClosed;
             scene.EventManager.OnValidateLandBuy -= OnValidateLandBuy;
@@ -156,10 +156,10 @@ namespace OMEconomy.OMCurrency
         }
 
 
-	//prior 0.7.6
-	//public void ApplyCharge(UUID agentID, int amount, string text) { }
+        //prior 0.7.6
+        //public void ApplyCharge(UUID agentID, int amount, string text) { }
 
-	//new since 0.7.6
+        //new since 0.7.6
         public void ApplyCharge(UUID agentID, int amount, MoneyTransactionType type) { }
         public void ApplyCharge(UUID agentID, int amount, MoneyTransactionType type, string extraData) { }
 
@@ -373,16 +373,16 @@ namespace OMEconomy.OMCurrency
                 int returnfunds = GetBalance(agentID);
 
 
-		//new since 0.7.6
-		client.SendMoneyBalance(
-		TransactionID, true, new byte[0], returnfunds, 0, UUID.Zero, false, UUID.Zero, false, 0, String.Empty);
+                //new since 0.7.6
+                client.SendMoneyBalance(
+                TransactionID, true, new byte[0], returnfunds, 0, UUID.Zero, false, UUID.Zero, false, 0, String.Empty);
 
-		//prior 0.7.6
-		//client.SendMoneyBalance(TransactionID, true, new byte[0], returnfunds);
+                //prior 0.7.6
+                //client.SendMoneyBalance(TransactionID, true, new byte[0], returnfunds);
 
             }
         }
-		
+
         public void DoMoneyTransfer(UUID sourceId, UUID destId, int amount, int transactiontype)
         {
             DoMoneyTransfer(sourceId, destId, amount, transactiontype, null);
@@ -391,44 +391,44 @@ namespace OMEconomy.OMCurrency
         public void DoMoneyTransfer(UUID sourceId, UUID destId, int amount,
             int transactiontype, Dictionary<string, string> additionalParameters)
         {
-			System.Threading.ThreadPool.QueueUserWorkItem(delegate {
-	            IClientAPI recipient = m_sceneHandler.LocateClientObject(destId);
-	            string recipientName = recipient == null ? destId.ToString() : recipient.FirstName + " " + recipient.LastName;
-	
-	            IClientAPI sender = m_sceneHandler.LocateClientObject(sourceId);
-	            string senderName = sender == null ? sourceId.ToString() : sender.FirstName + " " + sender.LastName;
-	
-	            Dictionary<string, string> d = new Dictionary<string, string>();
-	            d.Add("method", "transferMoney");
-	            d.Add("senderUUID", sourceId.ToString());
-	            d.Add("senderName", senderName);
-	            d.Add("recipientUUID", destId.ToString());
-	            d.Add("recipientName", recipientName);
-	            d.Add("amount", amount.ToString());
-	            d.Add("transactionType", transactiontype.ToString());
-	            if (transactiontype == (int)TransactionType.OBJECT_PAYS)
-	            {
-	                d.Add("regionUUID", m_sceneHandler.LocateSceneClientIn(destId).RegionInfo.RegionID.ToString());
-	            }
-	            else
-	            {
-	                d.Add("regionUUID", m_sceneHandler.LocateSceneClientIn(sourceId).RegionInfo.RegionID.ToString());
-	            }
-	            //d.Add("m_gridURL", m_gridURL);
-	
-	            if (additionalParameters != null)
-	            {
-	                foreach (KeyValuePair<string, string> pair in additionalParameters)
-	                {
-	                    d.Add(pair.Key, pair.Value);
-	                }
-	            }
-	
-	            if (m_communication.DoRequestDictionary(d) == null)
-	            {
-	                serviceNotAvailable(sourceId);
-	            }
-			}, null);
+            System.Threading.ThreadPool.QueueUserWorkItem(delegate {
+                IClientAPI recipient = m_sceneHandler.LocateClientObject(destId);
+                string recipientName = recipient == null ? destId.ToString() : recipient.FirstName + " " + recipient.LastName;
+
+                IClientAPI sender = m_sceneHandler.LocateClientObject(sourceId);
+                string senderName = sender == null ? sourceId.ToString() : sender.FirstName + " " + sender.LastName;
+
+                Dictionary<string, string> d = new Dictionary<string, string>();
+                d.Add("method", "transferMoney");
+                d.Add("senderUUID", sourceId.ToString());
+                d.Add("senderName", senderName);
+                d.Add("recipientUUID", destId.ToString());
+                d.Add("recipientName", recipientName);
+                d.Add("amount", amount.ToString());
+                d.Add("transactionType", transactiontype.ToString());
+                if (transactiontype == (int)TransactionType.OBJECT_PAYS)
+                {
+                    d.Add("regionUUID", m_sceneHandler.LocateSceneClientIn(destId).RegionInfo.RegionID.ToString());
+                }
+                else
+                {
+                    d.Add("regionUUID", m_sceneHandler.LocateSceneClientIn(sourceId).RegionInfo.RegionID.ToString());
+                }
+                //d.Add("m_gridURL", m_gridURL);
+
+                if (additionalParameters != null)
+                {
+                    foreach (KeyValuePair<string, string> pair in additionalParameters)
+                    {
+                        d.Add(pair.Key, pair.Value);
+                    }
+                }
+
+                if (m_communication.DoRequestDictionary(d) == null)
+                {
+                    serviceNotAvailable(sourceId);
+                }
+            }, null);
         }
 
         #region Local Fund Management
@@ -462,7 +462,7 @@ namespace OMEconomy.OMCurrency
 
         public void ObjectBuy(IClientAPI remoteClient, UUID agentID, UUID sessionID, UUID groupID, UUID categoryID, uint localID, byte saleType, int salePrice)
         {
-			m_log.DebugFormat("User {0} buys object {1} for {2} OMC", agentID, localID, salePrice);
+            m_log.DebugFormat("User {0} buys object {1} for {2} OMC", agentID, localID, salePrice);
             Scene s = m_sceneHandler.LocateSceneClientIn(remoteClient.AgentId);
             SceneObjectPart part = s.GetSceneObjectPart(localID);
             if (part == null)
@@ -473,11 +473,11 @@ namespace OMEconomy.OMCurrency
 
             if (salePrice == 0)
             {
-				m_log.Debug ("Sale Price is 0");
+                m_log.Debug ("Sale Price is 0");
                 IBuySellModule buyModule = s.RequestModuleInterface<IBuySellModule>();
                 if (buyModule != null)
                 {
-					m_log.Debug ("Call BuyObject if sale price is 0");
+                    m_log.Debug ("Call BuyObject if sale price is 0");
                     buyModule.BuyObject(remoteClient, categoryID, localID, saleType, salePrice);
                 }
                 else
@@ -512,10 +512,10 @@ namespace OMEconomy.OMCurrency
         public XmlRpcResponse currencyNotify(XmlRpcRequest request, IPEndPoint ep)
         {
 
-			XmlRpcResponse r = new XmlRpcResponse ();
-			Hashtable requestData = m_communication.ValidateRequest(request);
-			if(requestData != null) {
-				string method = (string)requestData["method"];
+            XmlRpcResponse r = new XmlRpcResponse ();
+            Hashtable requestData = m_communication.ValidateRequest(request);
+            if(requestData != null) {
+                string method = (string)requestData["method"];
                 switch (method)
                 {
                     case "notifyDeliverObject": r.Value = deliverObject(requestData);
@@ -533,10 +533,10 @@ namespace OMEconomy.OMCurrency
                     default: m_log.ErrorFormat("[{0}]: Method {1} is not supported", Name, method);
                         break;
                 }
-			} else {
-				r.SetFault(-1, "Could not validate the request");
-			}
-			return r;
+            } else {
+                r.SetFault(-1, "Could not validate the request");
+            }
+            return r;
         }
 
 
@@ -621,52 +621,52 @@ namespace OMEconomy.OMCurrency
         private Hashtable landBuy(Hashtable requestData)
         {
             Hashtable rparms = new Hashtable();
-			rparms["success"] = false;
+            rparms["success"] = false;
             try
             {
                 Dictionary<string, string> d = new Dictionary<string, string>();
                 d.Add("method", "buyLand");
                 d.Add("id", (string)requestData["id"]);
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-				if (response != null) 
-				{
-	                UUID agentID = UUID.Parse((string)response["senderUUID"]);
-	                int parcelLocalID = int.Parse((string)response["parcelLocalID"]);
-	                int transactionID = int.Parse((string)response["transactionID"]);
-	                int amountDebited = int.Parse((string)response["amountDebited"]);
-	                bool final = (string)response["final"] == "1" ? true : false;
-	                bool authenticated = (string)response["authenticated"] == "1" ? true : false;
-	                bool removeContribution = (string)response["removeContribution"] == "1" ? true : false;
+                if (response != null) 
+                {
+                    UUID agentID = UUID.Parse((string)response["senderUUID"]);
+                    int parcelLocalID = int.Parse((string)response["parcelLocalID"]);
+                    int transactionID = int.Parse((string)response["transactionID"]);
+                    int amountDebited = int.Parse((string)response["amountDebited"]);
+                    bool final = (string)response["final"] == "1" ? true : false;
+                    bool authenticated = (string)response["authenticated"] == "1" ? true : false;
+                    bool removeContribution = (string)response["removeContribution"] == "1" ? true : false;
 
-	                UUID regionUUID = UUID.Parse(response["regionUUID"]);
-	                Scene s = m_sceneHandler.GetSceneByUUID(regionUUID);
-	                ILandObject parcel = s.LandChannel.GetLandObject(parcelLocalID);
+                    UUID regionUUID = UUID.Parse(response["regionUUID"]);
+                    Scene s = m_sceneHandler.GetSceneByUUID(regionUUID);
+                    ILandObject parcel = s.LandChannel.GetLandObject(parcelLocalID);
 
-	                UUID groupID = parcel.LandData.GroupID;
-	                int parcelArea = parcel.LandData.Area;
-	                int parcelPrice = parcel.LandData.SalePrice;
-	                bool groupOwned = parcel.LandData.IsGroupOwned;
-	                UUID parcelOwnerUUID = parcel.LandData.OwnerID;
+                    UUID groupID = parcel.LandData.GroupID;
+                    int parcelArea = parcel.LandData.Area;
+                    int parcelPrice = parcel.LandData.SalePrice;
+                    bool groupOwned = parcel.LandData.IsGroupOwned;
+                    UUID parcelOwnerUUID = parcel.LandData.OwnerID;
 
-	                EventManager.LandBuyArgs landbuyArguments =
-	                    new EventManager.LandBuyArgs(agentID, groupID, final, groupOwned, removeContribution,
-	                                                 parcelLocalID, parcelArea, parcelPrice, authenticated);
+                    EventManager.LandBuyArgs landbuyArguments =
+                        new EventManager.LandBuyArgs(agentID, groupID, final, groupOwned, removeContribution,
+                                                     parcelLocalID, parcelArea, parcelPrice, authenticated);
 
-	                IClientAPI sender = m_sceneHandler.LocateClientObject(agentID);
-					if (sender != null)
-					{
-		                landbuyArguments.amountDebited = amountDebited;
-		                landbuyArguments.parcelOwnerID = parcelOwnerUUID;
-		                landbuyArguments.transactionID = transactionID;
+                    IClientAPI sender = m_sceneHandler.LocateClientObject(agentID);
+                    if (sender != null)
+                    {
+                        landbuyArguments.amountDebited = amountDebited;
+                        landbuyArguments.parcelOwnerID = parcelOwnerUUID;
+                        landbuyArguments.transactionID = transactionID;
 
-		                s.EventManager.TriggerValidateLandBuy(sender, landbuyArguments);
-		                landbuyArguments.economyValidated = true;
+                        s.EventManager.TriggerValidateLandBuy(sender, landbuyArguments);
+                        landbuyArguments.economyValidated = true;
 
-		                s.EventManager.TriggerLandBuy(sender, landbuyArguments);
+                        s.EventManager.TriggerLandBuy(sender, landbuyArguments);
 
-		                rparms["success"] = true;
-					}
-				}
+                        rparms["success"] = true;
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -680,7 +680,7 @@ namespace OMEconomy.OMCurrency
         private Hashtable deliverObject(Hashtable requestData)
         {
             Hashtable rparms = new Hashtable();
-			rparms["success"] = false;
+            rparms["success"] = false;
             try
             {
                 Dictionary<string, string> d = new Dictionary<string, string>();
@@ -688,7 +688,7 @@ namespace OMEconomy.OMCurrency
                 d.Add("id", (string)requestData["id"]);
 
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-				if (response != null && response["success"] == "TRUE" || response["success"] == "1")
+                if (response != null && response["success"] == "TRUE" || response["success"] == "1")
                 {
                     UInt32 localID = UInt32.Parse(response["localID"]);
                     UUID receiverUUID = UUID.Parse(response["receiverUUID"]);
@@ -710,8 +710,8 @@ namespace OMEconomy.OMCurrency
 
                     IBuySellModule buyModule = s.RequestModuleInterface<IBuySellModule>();
                     if (buyModule != null)
-					{
-						m_log.Debug("Call BuyObject from delicerObject");
+                    {
+                        m_log.Debug("Call BuyObject from delicerObject");
                         buyModule.BuyObject(sender, categoryID, localID, saleType, salePrice);
                     }
                     else
@@ -738,7 +738,7 @@ namespace OMEconomy.OMCurrency
         private Hashtable onObjectPaid(Hashtable requestData)
         {
             Hashtable rparms = new Hashtable();
-			rparms["success"] = false;
+            rparms["success"] = false;
             try
             {
                 Dictionary<string, string> d = new Dictionary<string, string>();
@@ -746,36 +746,36 @@ namespace OMEconomy.OMCurrency
                 d.Add("id", (string)requestData["id"]);
 
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-				if (response != null) 
-				{
-	                UUID primUUID = UUID.Parse(response["primUUID"]);
-	                UUID senderUUID = UUID.Parse(response["senderUUID"]);
-	                Int32 amount = Int32.Parse(response["amount"]);
+                if (response != null) 
+                {
+                    UUID primUUID = UUID.Parse(response["primUUID"]);
+                    UUID senderUUID = UUID.Parse(response["senderUUID"]);
+                    Int32 amount = Int32.Parse(response["amount"]);
 
-					IClientAPI depositor = m_sceneHandler.LocateClientObject(senderUUID);
-	                if (depositor == null)
-	                {
-	                    throw new Exception("Avatar " + senderUUID.ToString() + " does not reside in this Region");
-	                }
+                    IClientAPI depositor = m_sceneHandler.LocateClientObject(senderUUID);
+                    if (depositor == null)
+                    {
+                        throw new Exception("Avatar " + senderUUID.ToString() + " does not reside in this Region");
+                    }
 
 
-					ObjectPaid HandlerOnObjectPaid = OnObjectPaid;
-					if (HandlerOnObjectPaid != null) 
-					{
-						m_log.Debug("Trigger Object Payed");
-		                HandlerOnObjectPaid(primUUID, senderUUID, amount);
-					}
-					else
-					{
-						m_log.Debug("No Trigger Object Payed");
-					}
+                    ObjectPaid HandlerOnObjectPaid = OnObjectPaid;
+                    if (HandlerOnObjectPaid != null) 
+                    {
+                        m_log.Debug("Trigger Object Payed");
+                        HandlerOnObjectPaid(primUUID, senderUUID, amount);
+                    }
+                    else
+                    {
+                        m_log.Debug("No Trigger Object Payed");
+                    }
 
-					rparms["success"] = true;
-				}
+                    rparms["success"] = true;
+                }
             }
             catch (Exception e)
             {
-				m_log.Error("[OMCURRENCY]: onObjectPaid() " + e.Message);
+                m_log.Error("[OMCURRENCY]: onObjectPaid() " + e.Message);
             }
             return rparms;
         }
@@ -797,7 +797,7 @@ namespace OMEconomy.OMCurrency
 
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
 
-				if (response != null && response["success"] == "TRUE" || response["success"] == "1")
+                if (response != null && response["success"] == "TRUE" || response["success"] == "1")
                 {
                     returnresp.Add("success", true);
                 }
@@ -852,16 +852,16 @@ namespace OMEconomy.OMCurrency
                 d.Add("avatarUUID", (string)requestData["agentId"]);
 
                 Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-				if (response != null) 
-				{
-					quoteResponse.Add ("success", false);
-					quoteResponse.Add ("errorMessage", response ["errorMessage"]);
-					quoteResponse.Add ("errorURI", response ["errorURI"]);
-				} 
-				else 
-				{
-					quoteResponse.Add ("success", false);
-				}
+                if (response != null) 
+                {
+                    quoteResponse.Add ("success", false);
+                    quoteResponse.Add ("errorMessage", response ["errorMessage"]);
+                    quoteResponse.Add ("errorURI", response ["errorURI"]);
+                } 
+                else 
+                {
+                    quoteResponse.Add ("success", false);
+                }
             }
 
             XmlRpcResponse returnval = new XmlRpcResponse();
@@ -918,15 +918,15 @@ namespace OMEconomy.OMCurrency
             Dictionary<string, string> d = new Dictionary<string, string>();
             d.Add("method", "getExchangeRate");
             Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-			if (response != null)
-			{
-				return int.Parse((string)response["currentExchangeRate"]);
-			}
-			else
-			{
-				m_log.Error("buyLand(XmlRpcRequest request, IPEndPoint ep)");
-			}
-			return 0;
+            if (response != null)
+            {
+                return int.Parse((string)response["currentExchangeRate"]);
+            }
+            else
+            {
+                m_log.Error("buyLand(XmlRpcRequest request, IPEndPoint ep)");
+            }
+            return 0;
         }
 
         #endregion XML NOTIFICATIONS
