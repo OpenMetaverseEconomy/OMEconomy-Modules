@@ -1,9 +1,6 @@
 *OMEconomy for OpenSim (Payment Provider www.virwox.com)*  
 Version : Simulator-Version 0.7.5 - 0.7.6.3, 0.8.1, 0.8.2  
 
-### Note:
-Code and binaries in [develop branch](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/develop) are compatible with inoffical OpenSim 0.9.0.
-
 ## Using the Open Metaverse Currency
   [Follow me](Docs/Register.md)
 
