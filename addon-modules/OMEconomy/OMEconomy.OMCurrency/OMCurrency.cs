@@ -151,6 +151,11 @@ namespace OMEconomy.OMCurrency
         public void ApplyUploadCharge(UUID agentID, int second, string third) { }
         public void ApplyGroupCreationCharge(UUID agentID) { }
 
+        public bool MoveMoney(UUID fromAgentID, UUID toAgentID, int amount,MoneyTransactionType type, string text)
+        {
+		return false;
+        }
+
         public void MoveMoney(UUID fromAgentID, UUID toAgentID, int amount, string text)
         {
         }
