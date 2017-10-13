@@ -1,5 +1,5 @@
-*OMEconomy for OpenSim (Payment Provider www.virwox.com)*  
-Version : Simulator-Version 0.7.5 - 0.7.6.3, 0.8.1, 0.8.2  
+*OMEconomy for OpenSim (Payment Provider www.virwox.com)*
+Version : Simulator-Version 0.9.0
 
 ### Note:
 Code and binaries in [develop branch](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/develop) are compatible with inoffical OpenSim 0.9.0.
@@ -108,6 +108,7 @@ Change the configuration files _OMEconomy/prebuild.OMBase.xml_ and _OMEconomy/pr
 This yields in two files _bin/OMEconomy.OMBase.dll_ and _bin/OMEconomy.OMCurrency.dll_ in root directory of your OpenSimulator instance.
 
 
-For OpenSimulator 0.7.6.3 please use the code from branch [opensim-v0.7.6.3](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/opensim-v0.7.6.3).
-For OpenSimulator 0.8.1 please use the code from branch [opensim-v0.8.1](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/opensim-v0.8.1).
+* For OpenSimulator 0.7.6.3 please use the code from branch [opensim-v0.7.6.3](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/opensim-v0.7.6.3).
+* For OpenSimulator 0.8.1 please use the code from branch [opensim-v0.8.1](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/opensim-v0.8.1).
+* For OpenSimulator 0.8.2 please use the code from branch [opensim-v0.8.2](https://github.com/OpenMetaverseEconomy/OMEconomy-Modules/tree/opensim-v0.8.2).
 

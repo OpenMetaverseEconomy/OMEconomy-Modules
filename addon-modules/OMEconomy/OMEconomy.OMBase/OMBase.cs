@@ -53,19 +53,19 @@ namespace OMEconomy.OMBase
     [Extension(Path = "/OpenSim/RegionModules", NodeName = "RegionModule")]
     public class OMBaseModule : ISharedRegionModule
     {
-		private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-		private string MODULE_NAME = "OMBase";
-		public const string MODULE_VERSION = "4.0.4";
+        private string MODULE_NAME = "OMBase";
+        public const string MODULE_VERSION = "4.0.4";
 
         private bool Enabled = false;
 
-		private SceneHandler m_sceneHandler = SceneHandler.getInstance();
-		CommunicationHelpers m_communication = null;
+        private SceneHandler m_sceneHandler = SceneHandler.getInstance();
+        CommunicationHelpers m_communication = null;
 
-       	private delegate void delegateAsynchronousClaimUser(Dictionary<string, string> data);
+        private delegate void delegateAsynchronousClaimUser(Dictionary<string, string> data);
 
-		public OMBaseModule() {}
+        public OMBaseModule() {}
 
         #region ISharedRegion implementation
 
@@ -78,14 +78,14 @@ namespace OMEconomy.OMBase
         public void Initialise(IConfigSource config)
         {
 
-			m_communication = new CommunicationHelpers(config, MODULE_NAME, MODULE_VERSION);
+            m_communication = new CommunicationHelpers(config, MODULE_NAME, MODULE_VERSION);
 
             IConfig cfg = config.Configs["OpenMetaverseEconomy"];
 
-            if (null == cfg)
+            if (cfg == null)
                 return;
 
-            Enabled = cfg.GetBoolean("enabled", false);
+            Enabled = cfg.GetBoolean("enabled", Enabled);
 
             if (!Enabled)
                 return;
@@ -108,7 +108,7 @@ namespace OMEconomy.OMBase
             m_sceneHandler.AddScene(scene);
 
             InitializeRegion(
-				m_sceneHandler.GetRegionIP(scene), scene.RegionInfo.RegionName, scene.RegionInfo.originRegionID);
+                m_sceneHandler.GetRegionIP(scene), scene.RegionInfo.RegionName, scene.RegionInfo.originRegionID);
 
             scene.AddCommand(this, "OMBaseTest", "Test Open Metaverse Economy Connection", "Test Open Metaverse Economy Connection", TestConnection);
             scene.AddCommand(this, "OMRegister", "Registers the Metaverse Economy Module", "Registers the Metaverse Economy Module", RegisterModule);
@@ -124,30 +124,30 @@ namespace OMEconomy.OMBase
             scene.EventManager.OnClientClosed += OnClientClosed;
         }
 
-		private string UUIDToString(UUID item) {
-			return item.ToString();
-		}
+        private string UUIDToString(UUID item) {
+            return item.ToString();
+        }
 
         public void RemoveRegion(Scene scene)
-		{
-			m_log.Debug ("Close Region");
-		    if (!Enabled)
-		        return;
+        {
+            m_log.Debug ("Close Region");
+                if (!Enabled)
+                    return;
 
-		    scene.EventManager.OnMakeRootAgent -= OnMakeRootAgent;
-		    scene.EventManager.OnClientClosed -= OnClientClosed;
-						
-			List<string> regions = new List<string>();
-			regions.Add (scene.RegionInfo.originRegionID.ToString ());
+            scene.EventManager.OnMakeRootAgent -= OnMakeRootAgent;
+            scene.EventManager.OnClientClosed -= OnClientClosed;
 
-     		//List<string> regions = m_sceneHandler.GetUniqueRegions().ConvertAll<string>(UUIDToString);
-			System.Threading.ThreadPool.QueueUserWorkItem(delegate {
-				Dictionary<string, string> d = new Dictionary<string, string>();
+            List<string> regions = new List<string>();
+            regions.Add (scene.RegionInfo.originRegionID.ToString ());
 
-				d.Add("method", "closeRegion");
-				d.Add("regions", JsonMapper.ToJson(regions));
-				m_communication.DoRequestDictionary(d);
-			}, null);
+            //List<string> regions = m_sceneHandler.GetUniqueRegions().ConvertAll<string>(UUIDToString);
+            System.Threading.ThreadPool.QueueUserWorkItem(delegate {
+                Dictionary<string, string> d = new Dictionary<string, string>();
+
+                d.Add("method", "closeRegion");
+                d.Add("regions", JsonMapper.ToJson(regions));
+                m_communication.DoRequestDictionary(d);
+            }, null);
         }
 
         public void Close()
@@ -159,6 +159,8 @@ namespace OMEconomy.OMBase
         #region // Events
         private void OnMakeRootAgent(ScenePresence sp)
         {
+            if (sp.PresenceType == PresenceType.Npc) return;
+
             IClientAPI client = m_sceneHandler.LocateClientObject(sp.UUID);
             Scene currentScene = m_sceneHandler.LocateSceneClientIn(sp.UUID);
 
@@ -181,49 +183,49 @@ namespace OMEconomy.OMBase
             Scene sc = m_sceneHandler.LocateSceneClientIn(clientID);
             if (sc == null)
                 return;
-			System.Threading.ThreadPool.QueueUserWorkItem(delegate {
-	            try
-	            {
-	                Dictionary<string, string> d = new Dictionary<string, string>();
-	                d.Add("method", "leaveUser");
-	                d.Add("avatarUUID", clientID.ToString());
-	                d.Add("regionUUID", sc.RegionInfo.RegionID.ToString());
-	                m_communication.DoRequestDictionary(d);
-	            }
-	            catch (Exception e)
-	            {
-	                m_log.DebugFormat("[OMBASE]: LeaveAvatar(): {0}", e.Message);
-	            }
-			}, null);
+            System.Threading.ThreadPool.QueueUserWorkItem(delegate {
+                try
+                {
+                    Dictionary<string, string> d = new Dictionary<string, string>();
+                    d.Add("method", "leaveUser");
+                    d.Add("avatarUUID", clientID.ToString());
+                    d.Add("regionUUID", sc.RegionInfo.RegionID.ToString());
+                    m_communication.DoRequestDictionary(d);
+                }
+                catch (Exception e)
+                {
+                    m_log.DebugFormat("[OMBASE]: LeaveAvatar(): {0}", e.Message);
+                }
+            }, null);
         }
         #endregion
 
         internal void InitializeRegion(string regionAdress, string regionName, UUID regionUUID)
         {
-			System.Threading.ThreadPool.QueueUserWorkItem(delegate {
-	            Dictionary<string, string> d = new Dictionary<string, string>();
-	            d.Add("method", "initializeRegion");
-	            d.Add("regionIP", regionAdress);
-	            d.Add("regionName", regionName);
-	            d.Add("regionUUID", regionUUID.ToString());
-	            d.Add("simulatorVersion", VersionInfo.Version);
-	            d.Add("moduleVersion", MODULE_VERSION);
-	            Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-	
-				if (response != null)
-	            {
-					bool secret_updated = m_sceneHandler.SetRegionSecret(regionUUID, (string)response["regionSecret"]);
-					if (secret_updated)
-					{
-						m_log.InfoFormat("[{0}]: Updated secret for region {1}.", Name, regionUUID);
-					}
-					m_log.InfoFormat("[{0}]: The Service is Available.", Name);
-	            }
-	            else
-	            {
-					m_log.ErrorFormat("[{0}]: The Service is not Available", Name);
-	            }
-			}, null);
+            System.Threading.ThreadPool.QueueUserWorkItem(delegate {
+                Dictionary<string, string> d = new Dictionary<string, string>();
+                d.Add("method", "initializeRegion");
+                d.Add("regionIP", regionAdress);
+                d.Add("regionName", regionName);
+                d.Add("regionUUID", regionUUID.ToString());
+                d.Add("simulatorVersion", VersionInfo.Version);
+                d.Add("moduleVersion", MODULE_VERSION);
+                Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
+
+                if (response != null)
+                {
+                    bool secret_updated = m_sceneHandler.SetRegionSecret(regionUUID, (string)response["regionSecret"]);
+                    if (secret_updated)
+                    {
+                        m_log.InfoFormat("[{0}]: Updated secret for region {1}.", Name, regionUUID);
+                    }
+                    m_log.InfoFormat("[{0}]: The Service is Available.", Name);
+                }
+                else
+                {
+                    m_log.ErrorFormat("[{0}]: The Service is not Available", Name);
+                }
+            }, null);
         }
 
 
@@ -232,16 +234,16 @@ namespace OMEconomy.OMBase
             m_log.Info("[OMECONOMY]: +-");
             m_log.Info("[OMECONOMY]: | Your grid identifier is \"" + m_communication.getGridShortName() + "\"");
             string longName = MainConsole.Instance.CmdPrompt("           [OMECONOMY]: | Please enter the grid's full name");
-			string adminUUID = MainConsole.Instance.CmdPrompt("           [OMECONOMY]: | Please enter the admins Avatar UUID");
+            string adminUUID = MainConsole.Instance.CmdPrompt("           [OMECONOMY]: | Please enter the admins Avatar UUID");
 
             Dictionary<string, string> d = new Dictionary<string, string>();
             d.Add("method", "registerScript");
-			d.Add("gridLongName", longName);
-			d.Add("adminUUID", adminUUID);
+            d.Add("gridLongName", longName);
+            d.Add("adminUUID", adminUUID);
             d.Add("gridDescription", "");
 
             Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-			if (response != null && response.ContainsKey("success") && response["success"] == "TRUE")
+            if (response != null && response.ContainsKey("success") && response["success"] == "TRUE")
             {
                 m_log.Info("[OMECONOMY]: +-");
                 m_log.Info("[OMECONOMY]: | Please visit");
@@ -261,8 +263,8 @@ namespace OMEconomy.OMBase
             d.Add("method", "checkStatus");
             bool status = false;
 
-			Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
-			if (response != null && response.ContainsKey("status") && response["status"] == "INSOMNIA")
+            Dictionary<string, string> response = m_communication.DoRequestDictionary(d);
+            if (response != null && response.ContainsKey("status") && response["status"] == "INSOMNIA")
             {
                status = true;
             }
@@ -292,12 +294,12 @@ namespace OMEconomy.OMBase
             XmlRpcResponse r = new XmlRpcResponse();
             try
             {
-                
-				Hashtable requestData = m_communication.ValidateRequest(request);
+
+                Hashtable requestData = m_communication.ValidateRequest(request);
 
                 if (requestData != null)
                 {
-					string method = (string)requestData["method"];
+                    string method = (string)requestData["method"];
                     switch (method)
                     {
                         case "notifyUser": r.Value = UserInteract(requestData);
@@ -312,7 +314,7 @@ namespace OMEconomy.OMBase
                 }
                 else
                 {
-					r.SetFault(1, "Could not validate the request");
+                    r.SetFault(1, "Could not validate the request");
                 }
             }
             catch (Exception e)
