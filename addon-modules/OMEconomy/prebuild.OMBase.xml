@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<Project frameworkVersion="v4_0" name="OMEconomy.OMBase" path="addon-modules/OMEconomy/OMEconomy.OMBase" type="Library">
+<Project frameworkVersion="v4_6" name="OMEconomy.OMBase" path="addon-modules/OMEconomy/OMEconomy.OMBase" type="Library">
   <Configuration name="Debug">
     <Options>
       <OutputPath>../../../bin/</OutputPath>
